@@ -28,7 +28,7 @@ public class CANFuelSubsystem extends SubsystemBase {
     // create brushed motors for each of the motors on the launcher mechanism
     intakeLauncherRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
     feederRoller = new Spark(FEEDER_MOTOR_ID);
-    feederRoller.setInverted(true);
+    intakeLauncherRoller.setInverted(true);
 
     // put default values for various fuel operations onto the dashboard
     // all methods in this subsystem pull their values from the dashbaord to allow
