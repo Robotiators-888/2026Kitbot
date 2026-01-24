@@ -28,11 +28,11 @@ public class RobotContainer {
   private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
 
   // The driver's controller
-  private final CommandXboxController driverController = new CommandXboxController(
+  private final CommandXboxController Driver1 = new CommandXboxController(
       DRIVER_CONTROLLER_PORT);
 
   // The operator's controller
-  private final CommandXboxController Driver1 = new CommandXboxController(
+  private final CommandXboxController Driver2 = new CommandXboxController(
       OPERATOR_CONTROLLER_PORT);
 
   // The autonomous chooser
@@ -47,7 +47,7 @@ public class RobotContainer {
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
     // autoChooser.addOption
-    autoChooser.setDefaultOption("Autonomous", Autos.exampleAuto(driveSubsystem, ballSubsystem));
+    autoChooser.setDefaultOption("Autonomous", Autos.exampleAuto(driveSubsystem));
   }
 
   /**
@@ -64,17 +64,17 @@ public class RobotContainer {
   private void configureBindings() {
 
     // While the left bumper on operator controller is held, intake Fuel
-    Driver1.leftBumper()
+    Driver2.leftBumper()
         .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
-    Driver1.rightBumper()
+    Driver2.rightBumper()
         .whileTrue(ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
             .andThen(ballSubsystem.launchCommand())
             .finallyDo(() -> ballSubsystem.stop()));
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
-    Driver1.a()
+    Driver2.a()
         .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
 
     // Set the default command for the drive subsystem to the command provided by
@@ -86,8 +86,9 @@ public class RobotContainer {
     // are also scaled down so the rotation is more easily controllable.
     driveSubsystem.setDefaultCommand(
         driveSubsystem.driveArcade(
-            () -> -driverController.getLeftY() * DRIVE_SCALING,
-            () -> -driverController.getRightX() * ROTATION_SCALING));
+            () -> -Driver1.getRightX() * DRIVE_SCALING,
+            () -> -Driver1.getLeftY() * ROTATION_SCALING
+            ));
   }
 
   /**
@@ -96,7 +97,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    
     // An example command will be run in autonomous
-    return autoChooser.getSelected();
+    return Autos.exampleAuto(driveSubsystem);
   }
 }

@@ -8,7 +8,7 @@ import java.util.function.DoubleSupplier;
 
 
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -19,19 +19,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.DriveConstants.*;
 
 public class CANDriveSubsystem extends SubsystemBase {
-  private final WPI_TalonSRX leftLeader;
-  private final WPI_TalonSRX leftFollower;
-  private final WPI_TalonSRX rightLeader;
-  private final WPI_TalonSRX rightFollower;
+  private final WPI_VictorSPX leftLeader;
+  private final WPI_VictorSPX leftFollower;
+  private final WPI_VictorSPX rightLeader;
+  private final WPI_VictorSPX rightFollower;
 
   private final DifferentialDrive drive;
 
   public CANDriveSubsystem() {
     // create brushed motors for drive
-    leftLeader = new WPI_TalonSRX(LEFT_LEADER_ID);
-    leftFollower = new WPI_TalonSRX(LEFT_FOLLOWER_ID);
-    rightLeader = new WPI_TalonSRX(RIGHT_LEADER_ID);
-    rightFollower = new WPI_TalonSRX(RIGHT_FOLLOWER_ID);
+    leftLeader = new WPI_VictorSPX(LEFT_LEADER_ID);
+    leftFollower = new WPI_VictorSPX(LEFT_FOLLOWER_ID);
+    rightLeader = new WPI_VictorSPX(RIGHT_LEADER_ID);
+    rightFollower = new WPI_VictorSPX(RIGHT_FOLLOWER_ID);
 
     
     // set up differential drive class
