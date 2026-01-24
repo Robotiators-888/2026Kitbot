@@ -17,10 +17,10 @@ package frc.robot;
 public final class Constants {
   public static final class DriveConstants {
     // Motor controller IDs for drivetrain motors
-    public static final int LEFT_LEADER_ID = 20;
-    public static final int LEFT_FOLLOWER_ID = 21;
-    public static final int RIGHT_LEADER_ID = 22;
-    public static final int RIGHT_FOLLOWER_ID = 23;
+    public static final int LEFT_LEADER_ID = 22;
+    public static final int LEFT_FOLLOWER_ID = 23;
+    public static final int RIGHT_LEADER_ID = 20;
+    public static final int RIGHT_FOLLOWER_ID = 21;
 
     // Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
     // likelihood of tripping breakers or damaging CIM motors
