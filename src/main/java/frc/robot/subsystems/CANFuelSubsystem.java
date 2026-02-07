@@ -105,6 +105,10 @@ public class CANFuelSubsystem extends SubsystemBase {
     return this.run(() -> launch());
   }
 
+ public Command intakeCommand() {
+  return this.run(() -> intake());
+ }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

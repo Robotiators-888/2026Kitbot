@@ -47,7 +47,7 @@ public class RobotContainer {
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
     // autoChooser.addOption
-    autoChooser.setDefaultOption("Autonomous", Autos.exampleAuto(driveSubsystem));
+    autoChooser.setDefaultOption("Autonomous", Autos.exampleAuto(driveSubsystem, ballSubsystem));
   }
 
   /**
@@ -65,7 +65,7 @@ public class RobotContainer {
 
     // While the left bumper on operator controller is held, intake Fuel
     Driver1.leftBumper()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
+        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake() -> ballSubsystem.stop()));
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Driver1.rightTrigger()
@@ -99,6 +99,6 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
     // An example command will be run in autonomous
-    return Autos.exampleAuto(driveSubsystem);
+    return Autos.exampleAuto(driveSubsystem, ballSubsystem);
   }
 }
