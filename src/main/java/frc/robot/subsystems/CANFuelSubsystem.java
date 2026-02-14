@@ -75,7 +75,7 @@ public class CANFuelSubsystem extends SubsystemBase {
   public void launch() {
     feederRoller.setVoltage(SmartDashboard.getNumber("Launching feeder roller value", LAUNCHING_FEEDER_VOLTAGE));
     intakeLauncherRoller
-        .setVoltage(SmartDashboard.getNumber("Launching launcher roller value", LAUNCHING_LAUNCHER_VOLTAGE));
+        .set(SmartDashboard.getNumber("Launching launcher roller value", LAUNCHING_LAUNCHER_VOLTAGE));
   }
 
   // A method to stop the rollers
@@ -89,8 +89,6 @@ public class CANFuelSubsystem extends SubsystemBase {
   public void spinUp() {
     feederRoller
         .setVoltage(SmartDashboard.getNumber("Spin-up feeder roller value", SPIN_UP_FEEDER_VOLTAGE));
-    intakeLauncherRoller
-        .setVoltage(SmartDashboard.getNumber("Launching launcher roller value", LAUNCHING_LAUNCHER_VOLTAGE));
   }
 
   // A command factory to turn the spinUp method into a command that requires this
@@ -109,6 +107,9 @@ public class CANFuelSubsystem extends SubsystemBase {
   return this.run(() -> intake());
  }
 
+ public Command ejectCommand() {
+  return this.run(() -> eject());
+ }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

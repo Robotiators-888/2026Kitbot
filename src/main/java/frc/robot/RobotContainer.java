@@ -6,12 +6,17 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
-import frc.robot.commands.Autos;
 import frc.robot.subsystems.CANDriveSubsystem;
 import frc.robot.subsystems.CANFuelSubsystem;
 
@@ -47,7 +52,6 @@ public class RobotContainer {
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
     // autoChooser.addOption
-    autoChooser.setDefaultOption("Autonomous", Autos.exampleAuto(driveSubsystem, ballSubsystem));
   }
 
   /**
@@ -89,6 +93,9 @@ public class RobotContainer {
             () -> -Driver1.getRightX() * DRIVE_SCALING,
             () -> -Driver1.getLeftY() * ROTATION_SCALING
             ));
+    ballSubsystem.setDefaultCommand(
+      new RunCommand(()->ballSubsystem.stop(),ballSubsystem)
+    );
   }
 
   /**
@@ -99,6 +106,25 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     
     // An example command will be run in autonomous
-    return Autos.exampleAuto(driveSubsystem, ballSubsystem);
+    return new SequentialCommandGroup(
+        // Drive backwards for .25 seconds. The driveArcadeAuto command factory
+        // creates a command which does not end which allows us to control
+        // the timing using the withTimeout decorator
+        driveSubsystem.driveArcade(() -> 0, ()-> .5).withTimeout(.75),
+        // Stop driving. This line uses the regular driveArcade command factory so it
+        // ends immediately after commanding the motors to stop
+        driveSubsystem.driveArcade(() -> 0, () -> 0),
+        // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
+        // total of 10 seconds
+        
+        ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS),
+        
+        ballSubsystem.launchCommand().withTimeout(.65),
+
+        ballSubsystem.stop(),
+        ballSubsystem.ejectCommand().withTimeout(.5)
+    );
+
+
   }
 }
