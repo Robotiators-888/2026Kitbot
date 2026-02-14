@@ -91,6 +91,13 @@ public class CANFuelSubsystem extends SubsystemBase {
         .setVoltage(SmartDashboard.getNumber("Spin-up feeder roller value", SPIN_UP_FEEDER_VOLTAGE));
   }
 
+  public void Autoeject() {
+        feederRoller
+        .setVoltage(-1 * SmartDashboard.getNumber("Intaking feeder roller value", -8));
+    intakeLauncherRoller
+        .setVoltage(-1 * SmartDashboard.getNumber("Intaking launcher roller value", 6));
+  }
+
   // A command factory to turn the spinUp method into a command that requires this
   // subsystem
   public Command spinUpCommand() {
@@ -110,6 +117,11 @@ public class CANFuelSubsystem extends SubsystemBase {
  public Command ejectCommand() {
   return this.run(() -> eject());
  }
+
+public Command AutoejectCommand() {
+  return this.run(() -> Autoeject());
+}
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

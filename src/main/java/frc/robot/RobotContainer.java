@@ -9,11 +9,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
 
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
@@ -110,19 +112,20 @@ public class RobotContainer {
         // Drive backwards for .25 seconds. The driveArcadeAuto command factory
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
-        driveSubsystem.driveArcade(() -> 0, ()-> .5).withTimeout(.75),
+        driveSubsystem.driveArcade(() -> 0, ()-> .5).withTimeout(.5),
         // Stop driving. This line uses the regular driveArcade command factory so it
         // ends immediately after commanding the motors to stop
-        driveSubsystem.driveArcade(() -> 0, () -> 0),
+        driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
         // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
         // total of 10 seconds
-        
-        ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS),
-        
-        ballSubsystem.launchCommand().withTimeout(.65),
+        Commands.repeatingSequence(
+          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS),
+          ballSubsystem.launchCommand().withTimeout(.55),
+          new InstantCommand(() -> ballSubsystem.stop()),
 
-        ballSubsystem.stop(),
-        ballSubsystem.ejectCommand().withTimeout(.5)
+    
+          ballSubsystem.AutoejectCommand().withTimeout(.5)
+        )
     );
 
 
