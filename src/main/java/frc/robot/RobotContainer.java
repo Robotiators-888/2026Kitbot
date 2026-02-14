@@ -112,7 +112,7 @@ public class RobotContainer {
         // Drive backwards for .25 seconds. The driveArcadeAuto command factory
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
-        driveSubsystem.driveArcade(() -> 0, ()-> .5).withTimeout(.5),
+        driveSubsystem.driveArcade(() -> 0, ()-> .5).withTimeout(.75),
         // Stop driving. This line uses the regular driveArcade command factory so it
         // ends immediately after commanding the motors to stop
         driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
