@@ -26,8 +26,8 @@ public class CANFuelSubsystem extends SubsystemBase {
   /** Creates a new CANBallSubsystem. */
   public CANFuelSubsystem() {
     // create brushed motors for each of the motors on the launcher mechanism
-    feederRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
-    intakeLauncherRoller = new Spark(FEEDER_MOTOR_ID);
+    feederRoller = new Spark(FEEDER_MOTOR_ID);
+    intakeLauncherRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
     feederRoller.setInverted(true);
 
     // put default values for various fuel operations onto the dashboard
@@ -57,18 +57,18 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   // A method to set the rollers to values for intaking
   public void intake() {
-    feederRoller.setVoltage(SmartDashboard.getNumber("Intaking feeder roller value", INTAKING_FEEDER_VOLTAGE));
+    feederRoller.set(-1);
     intakeLauncherRoller
-        .setVoltage(SmartDashboard.getNumber("Intaking intake roller value", INTAKING_INTAKE_VOLTAGE));
+        .set(.25);
   }
 
   // A method to set the rollers to values for ejecting fuel out the intake. Uses
   // the same values as intaking, but in the opposite direction.
   public void eject() {
     feederRoller
-        .setVoltage(-1 * SmartDashboard.getNumber("Intaking feeder roller value", INTAKING_FEEDER_VOLTAGE));
+        .set(1);
     intakeLauncherRoller
-        .setVoltage(-1 * SmartDashboard.getNumber("Intaking launcher roller value", INTAKING_INTAKE_VOLTAGE));
+        .setVoltage(-.25);
   }
 
   // A method to set the rollers to values for launching.
@@ -91,11 +91,11 @@ public class CANFuelSubsystem extends SubsystemBase {
         .set(.7);
   }
 
-  public void Autoeject() {
+  public void Autointakeeject() {
         feederRoller
-        .setVoltage(-1 * SmartDashboard.getNumber("Intaking feeder roller value", -8));
+        .set(-.6);
     intakeLauncherRoller
-        .setVoltage(-1 * SmartDashboard.getNumber("Intaking launcher roller value", 6));
+        .setVoltage(.1);;
   }
 
   // A command factory to turn the spinUp method into a command that requires this
@@ -118,8 +118,8 @@ public class CANFuelSubsystem extends SubsystemBase {
   return this.run(() -> eject());
  }
 
-public Command AutoejectCommand() {
-  return this.run(() -> Autoeject());
+public Command AutointakeCommand() {
+  return this.run(() -> Autointakeeject());
 }
 
   @Override

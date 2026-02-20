@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
@@ -43,7 +43,7 @@ public class RobotContainer {
   //     OPERATOR_CONTROLLER_PORT);
 
   // The autonomous chooser
-  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -112,19 +112,21 @@ public class RobotContainer {
         // Drive backwards for .25 seconds. The driveArcadeAuto command factory
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
-        driveSubsystem.driveArcade(() -> 0, ()-> .67).withTimeout(1),
+        Commands.parallel(
+          driveSubsystem.driveArcade(() -> 0, ()-> .67).withTimeout(1),
+          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
+        ),
+        
         // Stop driving. This line uses the regular driveArcade command factory so it
         // ends immediately after commanding the motors to stop
         driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
         // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
         // total of 10 seconds
         Commands.repeatingSequence(
-          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS),
-          ballSubsystem.launchCommand().withTimeout(2.25),
+          ballSubsystem.launchCommand().withTimeout(1),
           new InstantCommand(() -> ballSubsystem.stop()),
-
-    
-          ballSubsystem.AutoejectCommand().withTimeout(.5)
+          ballSubsystem.AutointakeCommand().withTimeout(.5),
+          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
         )
     );
 
