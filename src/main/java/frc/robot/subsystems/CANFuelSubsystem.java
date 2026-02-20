@@ -26,9 +26,9 @@ public class CANFuelSubsystem extends SubsystemBase {
   /** Creates a new CANBallSubsystem. */
   public CANFuelSubsystem() {
     // create brushed motors for each of the motors on the launcher mechanism
-    intakeLauncherRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
-    feederRoller = new Spark(FEEDER_MOTOR_ID);
-    intakeLauncherRoller.setInverted(true);
+    feederRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
+    intakeLauncherRoller = new Spark(FEEDER_MOTOR_ID);
+    feederRoller.setInverted(true);
 
     // put default values for various fuel operations onto the dashboard
     // all methods in this subsystem pull their values from the dashbaord to allow
@@ -73,9 +73,9 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   // A method to set the rollers to values for launching.
   public void launch() {
-    feederRoller.setVoltage(SmartDashboard.getNumber("Launching feeder roller value", LAUNCHING_FEEDER_VOLTAGE));
-    intakeLauncherRoller
-        .set(SmartDashboard.getNumber("Launching launcher roller value", LAUNCHING_LAUNCHER_VOLTAGE));
+    intakeLauncherRoller.set(.7);
+    feederRoller
+        .set(.6);
   }
 
   // A method to stop the rollers
@@ -87,8 +87,8 @@ public class CANFuelSubsystem extends SubsystemBase {
   // A method to spin up the launcher roller while spinning the feeder roller to
   // push Fuel away from the launcher
   public void spinUp() {
-    feederRoller
-        .setVoltage(SmartDashboard.getNumber("Spin-up feeder roller value", SPIN_UP_FEEDER_VOLTAGE));
+    intakeLauncherRoller
+        .set(.7);
   }
 
   public void Autoeject() {
