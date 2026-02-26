@@ -56,26 +56,26 @@ public class CANFuelSubsystem extends SubsystemBase {
   }
 
   // A method to set the rollers to values for intaking
-  public void intake() {
-    feederRoller.set(-1);
+  public void eject() {
+    feederRoller.set(.7);
     intakeLauncherRoller
-        .set(.25);
+        .set(-.6);
   }
 
   // A method to set the rollers to values for ejecting fuel out the intake. Uses
   // the same values as intaking, but in the opposite direction.
-  public void eject() {
+  public void intake() {
     feederRoller
-        .set(1);
+        .set(-.7);
     intakeLauncherRoller
-        .setVoltage(-.25);
+        .set(.6);
   }
 
   // A method to set the rollers to values for launching.
   public void launch() {
-    intakeLauncherRoller.set(.7);
+    intakeLauncherRoller.set(.725);
     feederRoller
-        .set(.6);
+        .set(.55);
   }
 
   // A method to stop the rollers

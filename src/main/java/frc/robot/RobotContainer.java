@@ -71,7 +71,7 @@ public class RobotContainer {
 
     // While the left bumper on operator controller is held, intake Fuel
     Driver1.leftBumper()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
+        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Driver1.rightTrigger()
@@ -81,7 +81,7 @@ public class RobotContainer {
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
     Driver1.rightBumper()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
+        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
 
     // Set the default command for the drive subsystem to the command provided by
     // factory with the values provided by the joystick axes on the driver
@@ -113,7 +113,7 @@ public class RobotContainer {
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
         Commands.parallel(
-          driveSubsystem.driveArcade(() -> 0, ()-> .67).withTimeout(1),
+          driveSubsystem.driveArcade(() -> 0, ()-> .65).withTimeout(1),
           ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
         ),
         
@@ -123,10 +123,10 @@ public class RobotContainer {
         // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
         // total of 10 seconds
         Commands.repeatingSequence(
-          ballSubsystem.launchCommand().withTimeout(1),
-          new InstantCommand(() -> ballSubsystem.stop()),
-          ballSubsystem.AutointakeCommand().withTimeout(.5),
-          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
+          ballSubsystem.launchCommand().withTimeout(1)
+          // new InstantCommand(() -> ballSubsystem.stop()),
+          // ballSubsystem.AutointakeCommand().withTimeout(.5),
+          // ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
         )
     );
 
