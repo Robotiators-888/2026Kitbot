@@ -21,13 +21,13 @@ import static frc.robot.Constants.FuelConstants.*;
 
 public class CANFuelSubsystem extends SubsystemBase {
   private final Spark feederRoller;
-  private final Spark intakeLauncherRoller;
+  
 
   /** Creates a new CANBallSubsystem. */
   public CANFuelSubsystem() {
     // create brushed motors for each of the motors on the launcher mechanism
     feederRoller = new Spark(FEEDER_MOTOR_ID);
-    intakeLauncherRoller = new Spark(INTAKE_LAUNCHER_MOTOR_ID);
+    
     feederRoller.setInverted(true);
 
     // put default values for various fuel operations onto the dashboard
@@ -58,8 +58,7 @@ public class CANFuelSubsystem extends SubsystemBase {
   // A method to set the rollers to values for intaking
   public void eject() {
     feederRoller.set(.7);
-    intakeLauncherRoller
-        .set(-.6);
+
   }
 
   // A method to set the rollers to values for ejecting fuel out the intake. Uses
@@ -67,13 +66,12 @@ public class CANFuelSubsystem extends SubsystemBase {
   public void intake() {
     feederRoller
         .set(-.7);
-    intakeLauncherRoller
-        .set(.6);
+
   }
 
   // A method to set the rollers to values for launching.
   public void launch() {
-    intakeLauncherRoller.set(.725);
+
     feederRoller
         .set(.55);
   }
@@ -81,15 +79,12 @@ public class CANFuelSubsystem extends SubsystemBase {
   // A method to stop the rollers
   public void stop() {
     feederRoller.set(0);
-    intakeLauncherRoller.set(0);
+
   }
 
   // A method to spin up the launcher roller while spinning the feeder roller to
   // push Fuel away from the launcher
-  public void spinUp() {
-    intakeLauncherRoller
-        .set(.7);
-  }
+
 
   public void feed() {
     feederRoller.set(.55);
@@ -98,15 +93,12 @@ public class CANFuelSubsystem extends SubsystemBase {
   public void Autointakeeject() {
         feederRoller
         .set(-.6);
-    intakeLauncherRoller
-        .setVoltage(.1);;
+
   }
 
   // A command factory to turn the spinUp method into a command that requires this
   // subsystem
-  public Command spinUpCommand() {
-    return this.run(() -> spinUp());
-  }
+
 
   public Command feedCommand() {
     return this.run(() -> feed());

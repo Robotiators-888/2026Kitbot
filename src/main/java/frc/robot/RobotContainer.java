@@ -21,6 +21,7 @@ import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
 import frc.robot.subsystems.CANDriveSubsystem;
 import frc.robot.subsystems.CANFuelSubsystem;
+import frc.robot.subsystems.IntakeLauncherSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -33,6 +34,7 @@ public class RobotContainer {
   // The robot's subsystems
   private final CANDriveSubsystem driveSubsystem = new CANDriveSubsystem();
   private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
+  private final IntakeLauncherSubsystem intakeSubsystem = new IntakeLauncherSubsystem();
 
   // The driver's controller
   private final CommandXboxController Driver1 = new CommandXboxController(
@@ -70,20 +72,27 @@ public class RobotContainer {
   private void configureBindings() {
 
     // While the left bumper on operator controller is held, intake Fuel
-    Driver1.leftBumper()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop()));
+    Driver1.leftBumper().whileTrue(
+      new ParallelCommandGroup(
+        (ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop())),
+        (intakeSubsystem.runEnd(() -> intakeSubsystem.Intakeeject(), () -> intakeSubsystem.stop()))
+    ));
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Driver1.rightTrigger()
-        .whileTrue(ballSubsystem.spinUpCommand()
-            .finallyDo(() -> ballSubsystem.stop()));
+        .whileTrue(intakeSubsystem.spinUpCommand()
+            .finallyDo(() -> intakeSubsystem.stop()));
     Driver1.leftTrigger()
         .whileTrue(ballSubsystem.feedCommand()
             .finallyDo(() -> ballSubsystem.stop()));
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
-    Driver1.rightBumper()
-        .whileTrue(ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop()));
+    Driver1.rightBumper().whileTrue(
+    new ParallelCommandGroup(
+      (ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop())),
+      (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
+    );
+        
 
     // Set the default command for the drive subsystem to the command provided by
     // factory with the values provided by the joystick axes on the driver
@@ -100,6 +109,9 @@ public class RobotContainer {
     ballSubsystem.setDefaultCommand(
       new RunCommand(()->ballSubsystem.stop(),ballSubsystem)
     );
+        intakeSubsystem.setDefaultCommand(
+          new RunCommand(() -> intakeSubsystem.stop(),intakeSubsystem)
+        );
   }
 
   /**
@@ -116,7 +128,7 @@ public class RobotContainer {
         // the timing using the withTimeout decorator
         Commands.parallel(
           driveSubsystem.driveArcade(() -> 0, ()-> .65).withTimeout(1),
-          ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
+          intakeSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
         ),
         
         // Stop driving. This line uses the regular driveArcade command factory so it
