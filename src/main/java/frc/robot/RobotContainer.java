@@ -75,8 +75,10 @@ public class RobotContainer {
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Driver1.rightTrigger()
-        .whileTrue(ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
-            .andThen(ballSubsystem.launchCommand())
+        .whileTrue(ballSubsystem.spinUpCommand()
+            .finallyDo(() -> ballSubsystem.stop()));
+    Driver1.leftTrigger()
+        .whileTrue(ballSubsystem.feedCommand()
             .finallyDo(() -> ballSubsystem.stop()));
     // While the A button is held on the operator controller, eject fuel back out
     // the intake

@@ -91,6 +91,10 @@ public class CANFuelSubsystem extends SubsystemBase {
         .set(.7);
   }
 
+  public void feed() {
+    feederRoller.set(.55);
+  }
+
   public void Autointakeeject() {
         feederRoller
         .set(-.6);
@@ -102,6 +106,10 @@ public class CANFuelSubsystem extends SubsystemBase {
   // subsystem
   public Command spinUpCommand() {
     return this.run(() -> spinUp());
+  }
+
+  public Command feedCommand() {
+    return this.run(() -> feed());
   }
 
   // A command factory to turn the launch method into a command that requires this
