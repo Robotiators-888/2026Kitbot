@@ -16,28 +16,32 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
         public IntakeLauncherSubsystem() {
     
             intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+            
+
+            SparkMaxConfig launcherConfig = new SparkMaxConfig();
+
+            launcherConfig.smartCurrentLimit(LAUNCHER_MOTOR_CURRENT_LIMIT);
+            intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
         }
     
     
         public void Intakeeject() {
-            intakeLauncherRoller.set(-.6);
+            intakeLauncherRoller.set(-.3);
         }
 
         public void IntakeIntake() {
-            intakeLauncherRoller.set(.6);
+            intakeLauncherRoller.set(.3);
         }
 
-        public void LauncherLauch() {
-            intakeLauncherRoller.set(.7);
-        }
+
 
         public void stop() {
             intakeLauncherRoller.set(0);
         }
 
-        public void spinUp() {
-        intakeLauncherRoller.set(.7);
+        public void SpinUpandLaunch() {
+        intakeLauncherRoller.set(.3);
         }
     
         public void Intakeautointake() {    
@@ -46,7 +50,7 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
 
 
         public Command spinUpCommand() {
-        return this.run(() -> spinUp());
+        return this.run(() -> SpinUpandLaunch());
         }
 
         public Command IntakeautointakeCommand() {
@@ -61,7 +65,5 @@ public class IntakeLauncherSubsystem extends SubsystemBase {
             return this.run(() -> IntakeIntake());
         }
 
-        public Command LauncherLaunchCommand() {
-            return this.run(() -> LauncherLauch());
-        }
+
 }

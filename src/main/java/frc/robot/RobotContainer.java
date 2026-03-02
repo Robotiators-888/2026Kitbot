@@ -6,7 +6,6 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -136,10 +135,14 @@ public class RobotContainer {
         // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
         // total of 10 seconds
         Commands.repeatingSequence(
-          ballSubsystem.launchCommand().withTimeout(1)
-          // new InstantCommand(() -> ballSubsystem.stop()),
-          // ballSubsystem.AutointakeCommand().withTimeout(.5),
-          // ballSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
+        intakeSubsystem.spinUpCommand().withTimeout(1),
+
+        new ParallelCommandGroup(
+          intakeSubsystem.spinUpCommand().withTimeout(.5),
+          ballSubsystem.feedCommand().withTimeout(.5)
+
+        )
+
         )
     );
 

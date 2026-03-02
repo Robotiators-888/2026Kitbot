@@ -65,12 +65,6 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   }
 
-  // A method to set the rollers to values for launching.
-  public void launch() {
-
-    feederRoller
-        .set(.55);
-  }
 
   // A method to stop the rollers
   public void stop() {
@@ -102,9 +96,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   // A command factory to turn the launch method into a command that requires this
   // subsystem
-  public Command launchCommand() {
-    return this.run(() -> launch());
-  }
+
 
  public Command intakeCommand() {
   return this.run(() -> intake());
