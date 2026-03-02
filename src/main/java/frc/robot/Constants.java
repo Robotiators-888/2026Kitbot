@@ -34,7 +34,7 @@ public final class Constants {
 
     // Current limit and nominal voltage for fuel mechanism motors.
     public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
-    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 60;
+    public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 35;
 
     // Voltage values for various fuel operations. These values may need to be tuned
     // based on exact robot construction.
