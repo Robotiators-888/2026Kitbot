@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.DriveConstants.*;
 
-public class CANDriveSubsystem extends SubsystemBase {
+public class SUB_Drivetrain extends SubsystemBase {
   private final WPI_TalonSRX leftLeader;
   private final WPI_TalonSRX leftFollower;
   private final WPI_TalonSRX rightLeader;
@@ -26,7 +26,7 @@ public class CANDriveSubsystem extends SubsystemBase {
 
   private final DifferentialDrive drive;
 
-  public CANDriveSubsystem() {
+  public SUB_Drivetrain() {
     // create brushed motors for drive
     leftLeader = new WPI_TalonSRX(LEFT_LEADER_ID);
     leftFollower = new WPI_TalonSRX(LEFT_FOLLOWER_ID);

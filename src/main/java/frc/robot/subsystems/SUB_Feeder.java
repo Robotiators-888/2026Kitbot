@@ -19,12 +19,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.FuelConstants.*;
 
-public class CANFuelSubsystem extends SubsystemBase {
+public class SUB_Feeder extends SubsystemBase {
   private final Spark feederRoller;
   
 
   /** Creates a new CANBallSubsystem. */
-  public CANFuelSubsystem() {
+  public SUB_Feeder() {
     // create brushed motors for each of the motors on the launcher mechanism
     feederRoller = new Spark(FEEDER_MOTOR_ID);
     
@@ -53,7 +53,7 @@ public class CANFuelSubsystem extends SubsystemBase {
 
   // A method to set the rollers to values for intaking
   public void eject() {
-    feederRoller.set(.7);
+    feederRoller.set(Feeder_Eject_Speed);
 
   }
 
@@ -61,7 +61,7 @@ public class CANFuelSubsystem extends SubsystemBase {
   // the same values as intaking, but in the opposite direction.
   public void intake() {
     feederRoller
-        .set(-.7);
+        .set(Feeder_Intake_Speed);
 
   }
 
@@ -77,12 +77,12 @@ public class CANFuelSubsystem extends SubsystemBase {
 
 
   public void feed() {
-    feederRoller.set(.55);
+    feederRoller.set(Feeder_Launching_Speed);
   }
 
   public void Autointakeeject() {
         feederRoller
-        .set(-.6);
+        .set(Feeder_Auto_Intake_Speed);
 
   }
 

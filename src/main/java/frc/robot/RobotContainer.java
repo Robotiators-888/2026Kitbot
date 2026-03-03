@@ -17,9 +17,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
-import frc.robot.subsystems.CANDriveSubsystem;
-import frc.robot.subsystems.CANFuelSubsystem;
-import frc.robot.subsystems.IntakeLauncherSubsystem;
+import frc.robot.subsystems.SUB_Drivetrain;
+import frc.robot.subsystems.SUB_Feeder;
+import frc.robot.subsystems.SUB_IntakeLauncher;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,9 +30,9 @@ import frc.robot.subsystems.IntakeLauncherSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final CANDriveSubsystem driveSubsystem = new CANDriveSubsystem();
-  private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
-  private final IntakeLauncherSubsystem intakeSubsystem = new IntakeLauncherSubsystem();
+  private final SUB_Drivetrain driveSubsystem = new SUB_Drivetrain();
+  private final SUB_Feeder ballSubsystem = new SUB_Feeder();
+  private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
 
   // The driver's controller
   private final CommandXboxController Driver1 = new CommandXboxController(
