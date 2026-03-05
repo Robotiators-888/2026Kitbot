@@ -20,6 +20,7 @@ import static frc.robot.Constants.FuelConstants.*;
 import frc.robot.subsystems.SUB_Drivetrain;
 import frc.robot.subsystems.SUB_Feeder;
 import frc.robot.subsystems.SUB_IntakeLauncher;
+import frc.robot.subsystems.SUB_Limelight;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,9 +31,10 @@ import frc.robot.subsystems.SUB_IntakeLauncher;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final SUB_Drivetrain driveSubsystem = new SUB_Drivetrain();
+  private final SUB_Drivetrain driveSubsystem = SUB_Drivetrain.getInstance();
   private final SUB_Feeder ballSubsystem = new SUB_Feeder();
   private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
+  private final SUB_Limelight limelightSubsystem = new SUB_Limelight();
 
   // The driver's controller
   private final CommandXboxController Driver1 = new CommandXboxController(
@@ -56,6 +58,8 @@ public class RobotContainer {
     // autoChooser.addOption
   }
 
+  
+
   /**
    * Use this method to define your trigger->command mappings. Triggers can be
    * created via the {@link Trigger#Trigger(java.util.function.BooleanSupplier)}
@@ -67,6 +71,7 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
+  
   private void configureBindings() {
 
     // While the left bumper on operator controller is held, intake Fuel
@@ -90,6 +95,12 @@ public class RobotContainer {
       (ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop())),
       (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
     );
+
+    Driver1.rightStick()
+    .whileTrue(
+      Commands.run(() -> limelightSubsystem.Autoalign(), driveSubsystem)
+
+    );
         
 
     // Set the default command for the drive subsystem to the command provided by
@@ -111,7 +122,7 @@ public class RobotContainer {
           new RunCommand(() -> intakeSubsystem.stop(),intakeSubsystem)
         );
   }
-
+     
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
@@ -121,7 +132,7 @@ public class RobotContainer {
     
     // An example command will be run in autonomous
     return new SequentialCommandGroup(
-        // Drive backwards for .25 seconds. The driveArcadeAuto command factory
+        // Drive backwards for 1 seconds. The driveArcadeAuto command factory
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
         Commands.parallel(
@@ -132,8 +143,7 @@ public class RobotContainer {
         // Stop driving. This line uses the regular driveArcade command factory so it
         // ends immediately after commanding the motors to stop
         driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
-        // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
-        // total of 10 seconds
+
         Commands.repeatingSequence(
         intakeSubsystem.spinUpCommand().withTimeout(1),
 

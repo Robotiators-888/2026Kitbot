@@ -13,6 +13,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
     private SparkMax intakeLauncherRoller;
     public Object stop;
     
+        @SuppressWarnings("removal")
         public SUB_IntakeLauncher() {
     
             intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);

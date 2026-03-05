@@ -51,6 +51,16 @@ public final class Constants {
     public static final double SPIN_UP_SECONDS = 1;
   }
 
+  public static final class LimelightConsants {
+    public static final double Limelight_Forward_distance = 0; //meters forward from center of robot
+    public static final double Limelight_Side_distance = 0;
+    public static final double Limelight_Up_distance = 0;
+    public static final double Limelight_Roll_angle = 0; //degrees
+    public static final double Limelight_pitch_angle = 0;
+    public static final double Limelight_Yaw_angle = 0;
+
+  }
+
   public static final class OperatorConstants {
     // Port constants for driver and operator controllers. These should match the
     // values in the Joystick tab of the Driver Station software
@@ -61,5 +71,7 @@ public final class Constants {
     // help avoid driving and turning too fast and being difficult to control
     public static final double DRIVE_SCALING = -.8;
     public static final double ROTATION_SCALING = -.9;
+    public static final double Auto_Align_Rotation_Speed = .2;
+    public static final double AUto_Align_Drive_Speed = 0;
   }
 }
