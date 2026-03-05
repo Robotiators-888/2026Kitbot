@@ -96,7 +96,7 @@ public class RobotContainer {
       (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
     );
 
-    Driver1.rightStick()
+    Driver1.a()
     .whileTrue(
       Commands.run(() -> limelightSubsystem.Autoalign(), driveSubsystem)
 
