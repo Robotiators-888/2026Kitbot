@@ -28,7 +28,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
     
     
         public void Intakeeject() {
-            intakeLauncherRoller.set(IntakeLauncher_Intake_Speed);
+            intakeLauncherRoller.set(-1*IntakeLauncher_Intake_Speed);
         }
 
         public void IntakeIntake() {
