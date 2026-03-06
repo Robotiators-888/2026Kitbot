@@ -97,10 +97,10 @@ public class RobotContainer {
     );
 
     Driver1.a()
-    .whileTrue(
+    .onTrue(
       Commands.run(() -> limelightSubsystem.Autoalign(), driveSubsystem)
 
-    );
+    ).onFalse(driveSubsystem.driveArcade(() -> 0, () -> 0));
 
 
     // Set the default command for the drive subsystem to the command provided by

@@ -26,6 +26,8 @@ public class SUB_Limelight extends SubsystemBase {
          //Sets the Limelight to only target the april tag with ID 9 which is on the Hub
         double degreesoff = LimelightHelpers.getTX(""); //Determines how many degrees of the center of the camera is to the april tag
         boolean Isseen = LimelightHelpers.getTV(""); //Says if an april tag is seen
+        LimelightHelpers.SetFiducialIDFiltersOverride("", new int[]{9});
+
         LimelightHelpers.setLEDMode_ForceOff("");
         if (Isseen == true) {
 
