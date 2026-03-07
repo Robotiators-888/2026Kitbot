@@ -98,7 +98,8 @@ public class RobotContainer {
 
     Driver1.a()
     .whileTrue(
-      Commands.run(() -> limelightSubsystem.AutoAlignCommand(), driveSubsystem)
+      Commands.run(() -> limelightSubsystem.AutoAlignCommand(), limelightSubsystem, driveSubsystem)
+
 
     );
 
