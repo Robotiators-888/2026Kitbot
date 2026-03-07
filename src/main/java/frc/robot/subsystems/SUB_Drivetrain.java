@@ -6,24 +6,47 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-
+import com.studica.frc.AHRS;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+
+
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.util.Units;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
+
 import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.OperatorConstants.ROTATION_SCALING;
+
 
 public class SUB_Drivetrain extends SubsystemBase {
+
+
   private static SUB_Drivetrain INSTANCE = null;
   private final WPI_TalonSRX leftLeader;
   private final WPI_TalonSRX leftFollower;
   private final WPI_TalonSRX rightLeader;
   private final WPI_TalonSRX rightFollower;
+  public final AHRS navx;
+  public  DifferentialDriveKinematics m_kinematics;
+  public final DifferentialDrivePoseEstimator m_poseEstimator;
+  public DifferentialDriveWheelSpeeds wheelSpeeds;
+  public DifferentialDriveWheelSpeeds past_wheelSpeeds;
+
+
+
 
   private final DifferentialDrive drive;
   public static SUB_Drivetrain getInstance(){
@@ -38,7 +61,23 @@ public class SUB_Drivetrain extends SubsystemBase {
     leftFollower = new WPI_TalonSRX(LEFT_FOLLOWER_ID);
     rightLeader = new WPI_TalonSRX(RIGHT_LEADER_ID);
     rightFollower = new WPI_TalonSRX(RIGHT_FOLLOWER_ID);
+    navx = new AHRS(AHRS.NavXComType.kMXP_SPI);
+    
 
+    m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(23.0));
+
+
+      m_poseEstimator =
+      new DifferentialDrivePoseEstimator(
+          m_kinematics,
+          navx.getRotation2d(),
+          0,
+          0,
+          new Pose2d(),
+          VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5)),
+          VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30)));
+
+    
     
     // set up differential drive class
     drive = new DifferentialDrive(leftLeader, rightLeader);
@@ -48,15 +87,38 @@ public class SUB_Drivetrain extends SubsystemBase {
 
 
 
+
+
   };
 
- @Override
-  public void periodic() {
-  }
+
+
 
   // Command factory to create command to drive the robot with joystick inputs.
   public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
     return this.run(
         () -> drive.arcadeDrive(xSpeed.getAsDouble(), zRotation.getAsDouble()));
   }
+
+ @Override
+  public void periodic() {
+    wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters(10.91)*leftLeader.get(), Units.feetToMeters(10.91)*rightLeader.get());
+
+        m_poseEstimator.update(
+        navx.getRotation2d(), wheelSpeeds.leftMetersPerSecond-past_wheelSpeeds.leftMetersPerSecond, 
+            wheelSpeeds.rightMetersPerSecond-past_wheelSpeeds.rightMetersPerSecond);
+            // In your periodic function:
+    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
+    if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
+        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        m_poseEstimator.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds
+        );
+        past_wheelSpeeds = wheelSpeeds;
+    // Convert to chassis speeds.
+
+  
+  }
+}
 }

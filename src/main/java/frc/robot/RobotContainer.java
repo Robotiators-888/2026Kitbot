@@ -37,7 +37,7 @@ public class RobotContainer {
   private final SUB_Limelight limelightSubsystem = new SUB_Limelight();
 
   // The driver's controller
-  private final CommandXboxController Driver1 = new CommandXboxController(
+  public final CommandXboxController Driver1 = new CommandXboxController(
       DRIVER_CONTROLLER_PORT);
 
   // The operator's controller
@@ -96,12 +96,7 @@ public class RobotContainer {
       (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
     );
 
-    Driver1.a()
-    .whileTrue(
-      Commands.run(() -> limelightSubsystem.AutoAlignCommand(), limelightSubsystem, driveSubsystem)
 
-
-    );
 
 
     // Set the default command for the drive subsystem to the command provided by
@@ -124,6 +119,11 @@ public class RobotContainer {
         );
   }
      
+
+  public void periodic() {
+
+    
+  }
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
