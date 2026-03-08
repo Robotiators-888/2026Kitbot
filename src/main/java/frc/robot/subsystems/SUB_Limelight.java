@@ -32,19 +32,7 @@ public class SUB_Limelight extends SubsystemBase {
 
     public void periodic() {
     
-     driveSubsystem.m_poseEstimator.update(
-        driveSubsystem.navx.getRotation2d(), driveSubsystem.wheelSpeeds.leftMetersPerSecond-driveSubsystem.past_wheelSpeeds.leftMetersPerSecond, 
-            driveSubsystem.wheelSpeeds.rightMetersPerSecond-driveSubsystem.past_wheelSpeeds.rightMetersPerSecond);
-            // In your periodic function:
-    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight");
-    if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
-        driveSubsystem.m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-        driveSubsystem.m_poseEstimator.addVisionMeasurement(
-            limelightMeasurement.pose,
-            limelightMeasurement.timestampSeconds
-        );
-        driveSubsystem.past_wheelSpeeds = driveSubsystem.wheelSpeeds;
-    }
+
 
 
 
