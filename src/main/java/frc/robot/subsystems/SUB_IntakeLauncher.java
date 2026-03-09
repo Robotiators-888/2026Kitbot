@@ -17,7 +17,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
         public SUB_IntakeLauncher() {
     
             intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
-            
+
 
             SparkMaxConfig launcherConfig = new SparkMaxConfig();
 

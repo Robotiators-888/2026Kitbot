@@ -20,7 +20,7 @@ import static frc.robot.Constants.FuelConstants.*;
 import frc.robot.subsystems.SUB_Drivetrain;
 import frc.robot.subsystems.SUB_Feeder;
 import frc.robot.subsystems.SUB_IntakeLauncher;
-import frc.robot.subsystems.SUB_Limelight;
+
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -34,7 +34,7 @@ public class RobotContainer {
   private final SUB_Drivetrain driveSubsystem = SUB_Drivetrain.getInstance();
   private final SUB_Feeder ballSubsystem = new SUB_Feeder();
   private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
-  private final SUB_Limelight limelightSubsystem = new SUB_Limelight();
+
 
   // The driver's controller
   public final CommandXboxController Driver1 = new CommandXboxController(

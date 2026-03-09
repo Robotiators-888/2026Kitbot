@@ -19,14 +19,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.FuelConstants.*;
 
+
 public class SUB_Feeder extends SubsystemBase {
   private final Spark feederRoller;
-  
+
 
   /** Creates a new CANBallSubsystem. */
   public SUB_Feeder() {
+    
     // create brushed motors for each of the motors on the launcher mechanism
     feederRoller = new Spark(FEEDER_MOTOR_ID);
+
+    
+    
     
     feederRoller.setInverted(true);
 
@@ -115,3 +120,4 @@ public Command AutointakeCommand() {
     // This method will be called once per scheduler run
   }
 }
+

@@ -14,12 +14,12 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
+
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.math.util.Units;
@@ -29,7 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
 import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.OperatorConstants.ROTATION_SCALING;
+
+import static frc.robot.Constants.LimelightConsants.*;
 
 
 public class SUB_Drivetrain extends SubsystemBase {
@@ -45,9 +46,9 @@ public class SUB_Drivetrain extends SubsystemBase {
   public final DifferentialDrivePoseEstimator m_poseEstimator;
   public DifferentialDriveWheelSpeeds wheelSpeeds;
   public DifferentialDriveWheelSpeeds past_wheelSpeeds;
-  private final Pose2d poseA;
-  private final Pose2d poseB;
-  private final Field2d field;
+
+
+  public final Field2d field;
 
 
 
@@ -60,18 +61,32 @@ public class SUB_Drivetrain extends SubsystemBase {
   }
   private SUB_Drivetrain() {
     // create brushed motors for drive
+
     leftLeader = new WPI_TalonSRX(LEFT_LEADER_ID);
     leftFollower = new WPI_TalonSRX(LEFT_FOLLOWER_ID);
     rightLeader = new WPI_TalonSRX(RIGHT_LEADER_ID);
     rightFollower = new WPI_TalonSRX(RIGHT_FOLLOWER_ID);
+
     navx = new AHRS(AHRS.NavXComType.kMXP_SPI);
+
+    LimelightHelpers.setCameraPose_RobotSpace("lime",
+          Limelight_Forward_distance, 
+          Limelight_Side_distance, 
+          Limelight_Up_distance, 
+          Limelight_Roll_angle, 
+          Limelight_Pitch_angle, 
+          Limelight_Yaw_angle
+        );
+
+
     field = new Field2d();
+    field.setRobotPose(0, 0, navx.getRotation2d());
+    
 
     past_wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
     wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
 
-    poseA = new Pose2d();
-    poseB = new Pose2d();
+
     
 
     m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(23.0));
@@ -113,25 +128,37 @@ public class SUB_Drivetrain extends SubsystemBase {
   StructPublisher<Pose2d> robotposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("MyPose",Pose2d.struct).publish();
 
+
  @Override
   public void periodic() {
     wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters(10.91)*leftLeader.get(), Units.feetToMeters(10.91)*rightLeader.get());
     
 
-        m_poseEstimator.update(
-        navx.getRotation2d(), wheelSpeeds.leftMetersPerSecond-past_wheelSpeeds.leftMetersPerSecond, 
-            wheelSpeeds.rightMetersPerSecond-past_wheelSpeeds.rightMetersPerSecond);
+    m_poseEstimator.update(
+        navx.getRotation2d(), .02 * wheelSpeeds.leftMetersPerSecond, 
+            .02 * past_wheelSpeeds.rightMetersPerSecond);
             // In your periodic function:
-    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
-    if (limelightMeasurement.tagCount >= 1) {  // Only trust measurement if we see multiple tags
-        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-        m_poseEstimator.addVisionMeasurement(
-            m_poseEstimator.getEstimatedPosition(),
-            limelightMeasurement.timestampSeconds
-        );
+ 
         past_wheelSpeeds = wheelSpeeds;
 
-    robotposepublisher.set(m_poseEstimator.getEstimatedPosition());
+    
+   LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
+    if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
+        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        m_poseEstimator.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds
+        );
+    //field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+
+    field.setRobotPose(LimelightHelpers.getBotPose2d_wpiBlue(""));
+
+
+
+    
+    robotposepublisher.set(field.getRobotPose());
+
+    
     
     // Convert to chassis speeds.
 
