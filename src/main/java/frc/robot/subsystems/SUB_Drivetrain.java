@@ -127,6 +127,7 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   StructPublisher<Pose2d> robotposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("MyPose",Pose2d.struct).publish();
+  
 
 
  @Override
@@ -151,11 +152,12 @@ public class SUB_Drivetrain extends SubsystemBase {
         );
     //field.setRobotPose(m_poseEstimator.getEstimatedPosition());
 
-    field.setRobotPose(LimelightHelpers.getBotPose2d_wpiBlue(""));
+    //field.setRobotPose(LimelightHelpers.getBotPose2d_wpiBlue(""));
+   field.getRobotObject();
 
 
 
-    
+    field.setRobotPose(4,5,navx.getRotation2d());
     robotposepublisher.set(field.getRobotPose());
 
     
