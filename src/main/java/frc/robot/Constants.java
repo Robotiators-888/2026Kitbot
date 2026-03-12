@@ -23,35 +23,39 @@ public final class Constants {
     public static final int RIGHT_FOLLOWER_ID = 22;
 
     // Current limit for drivetrain motors. 60A is a reasonable maximum to reduce
-    // likelihood of tripping breakers or damaging CIM motors
+    // likelihood of tripping breakers or damaging motors
     public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
   }
 
   public static final class FuelConstants {
     // Motor controller IDs for Fuel Mechanism motors
     public static final int FEEDER_MOTOR_ID = 0;
-    public static final int INTAKE_LAUNCHER_MOTOR_ID = 1;
+    public static final int INTAKE_LAUNCHER_MOTOR_ID = 20;
 
     // Current limit and nominal voltage for fuel mechanism motors.
-    public static final int FEEDER_MOTOR_CURRENT_LIMIT = 60;
+
     public static final int LAUNCHER_MOTOR_CURRENT_LIMIT = 35;
 
-    // Voltage values for various fuel operations. These values may need to be tuned
+    // Speed values for various fuel operations. These values may need to be tuned
     // based on exact robot construction.
     // See the Software Guide for tuning information
-    public static final double INTAKING_FEEDER_VOLTAGE = -12;
-    public static final double INTAKING_INTAKE_VOLTAGE = 6;
-    public static final double LAUNCHING_FEEDER_VOLTAGE = 8;
-    public static final double LAUNCHING_LAUNCHER_VOLTAGE = 6;
-    public static final double SPIN_UP_FEEDER_VOLTAGE = 8;
+    public static final double INTAKER_INTAKING_SPEED = 0.3;
+    public static final double INTAKER_EJECT_SPEED = -0.3;
+    public static final double INTAKER_LAUNCHING_SPEED = .5;
+    public static final double FEEDER_INTAKE_SPEED  = 0.7;
+    public static final double FEEDER_EJECT_SPEED = 0.7;
+    public static final double FEEDER_LAUNCHING_SPEED = 0.55;
+
+
+    //How long the robot will spin up before shooting in Auto
     public static final double SPIN_UP_SECONDS = 1;
+
   }
 
   public static final class OperatorConstants {
-    // Port constants for driver and operator controllers. These should match the
-    // values in the Joystick tab of the Driver Station software
+    //Port constants of the controller
     public static final int DRIVER_CONTROLLER_PORT = 0;
-    public static final int OPERATOR_CONTROLLER_PORT = 1;
+
 
     // This value is multiplied by the joystick value when driving the robot to
     // help avoid driving and turning too fast and being difficult to control

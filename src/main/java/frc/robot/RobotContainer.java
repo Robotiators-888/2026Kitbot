@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
-import frc.robot.subsystems.CANDriveSubsystem;
-import frc.robot.subsystems.CANFuelSubsystem;
-import frc.robot.subsystems.IntakeLauncherSubsystem;
+import frc.robot.subsystems.SUB_Drivetrain;
+import frc.robot.subsystems.SUB_Feeder;
+import frc.robot.subsystems.SUB_IntakeLauncher;
+import frc.robot.subsystems.SUB_IntakeLauncher;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -30,19 +31,15 @@ import frc.robot.subsystems.IntakeLauncherSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final CANDriveSubsystem driveSubsystem = new CANDriveSubsystem();
-  private final CANFuelSubsystem ballSubsystem = new CANFuelSubsystem();
-  private final IntakeLauncherSubsystem intakeSubsystem = new IntakeLauncherSubsystem();
+  private final SUB_Drivetrain driveSubsystem = new SUB_Drivetrain();
+  private final SUB_Feeder ballSubsystem = new SUB_Feeder();
+  private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
 
-  // The driver's controller
+  // The main controller
   private final CommandXboxController Driver1 = new CommandXboxController(
       DRIVER_CONTROLLER_PORT);
 
-  // The operator's controller
-  // private final CommandXboxController Driver2 = new CommandXboxController(
-  //     OPERATOR_CONTROLLER_PORT);
-
-  // The autonomous chooser
+ 
 
 
   /**
@@ -51,9 +48,6 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
 
-    // Set the options to show up in the Dashboard for selecting auto modes. If you
-    // add additional auto modes you can add additional lines here with
-    // autoChooser.addOption
   }
 
   /**
@@ -69,22 +63,24 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-    // While the left bumper on operator controller is held, intake Fuel
+    // While the left bumper on operator controller is held, eject Fuel
     Driver1.leftBumper().whileTrue(
       new ParallelCommandGroup(
         (ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop())),
         (intakeSubsystem.runEnd(() -> intakeSubsystem.Intakeeject(), () -> intakeSubsystem.stop()))
     ));
-    // While the right bumper on the operator controller is held, spin up for 1
-    // second, then launch fuel. When the button is released, stop.
+
+    // While the right trigger on the controller the launcher motor gets up to speed
     Driver1.rightTrigger()
         .whileTrue(intakeSubsystem.spinUpCommand()
             .finallyDo(() -> intakeSubsystem.stop()));
+
+    //WHile left trigger is being held balls are fed into the launcher
     Driver1.leftTrigger()
         .whileTrue(ballSubsystem.feedCommand()
             .finallyDo(() -> ballSubsystem.stop()));
-    // While the A button is held on the operator controller, eject fuel back out
-    // the intake
+
+    //While right bumper is held the robot intakes
     Driver1.rightBumper().whileTrue(
     new ParallelCommandGroup(
       (ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop())),
@@ -121,7 +117,8 @@ public class RobotContainer {
     
     // An example command will be run in autonomous
     return new SequentialCommandGroup(
-        // Drive backwards for .25 seconds. The driveArcadeAuto command factory
+        // Drive backwards for 1 second. The driveArcadeAuto command factory
+        // Also spins up launcher motor
         // creates a command which does not end which allows us to control
         // the timing using the withTimeout decorator
         Commands.parallel(
@@ -132,8 +129,8 @@ public class RobotContainer {
         // Stop driving. This line uses the regular driveArcade command factory so it
         // ends immediately after commanding the motors to stop
         driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
-        // Spin up the launcher for 1 second and then launch balls for 9 seconds, for a
-        // total of 10 seconds
+
+        //Repeats spining up and launching
         Commands.repeatingSequence(
         intakeSubsystem.spinUpCommand().withTimeout(1),
 

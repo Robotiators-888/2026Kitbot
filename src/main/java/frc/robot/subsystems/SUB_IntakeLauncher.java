@@ -9,58 +9,61 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.FuelConstants.*;
-public class IntakeLauncherSubsystem extends SubsystemBase {
+public class SUB_IntakeLauncher extends SubsystemBase {
+
+    //Creates SparkMax object
     private SparkMax intakeLauncherRoller;
-    public Object stop;
+
     
-        public IntakeLauncherSubsystem() {
-    
+        public SUB_IntakeLauncher() {
+
+
+            //Defines SparkMax Object
             intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
             
-
+            //Creates Config for launchermotor
             SparkMaxConfig launcherConfig = new SparkMaxConfig();
 
+            //Sets currentlimit for motor and establishes persist mode which stops Sparkmax settings(Brushed/Brushless, ID, and Coast/Brushed) Not be lost
             launcherConfig.smartCurrentLimit(LAUNCHER_MOTOR_CURRENT_LIMIT);
             intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     
         }
     
     
+        //Creates method for Intake motor to eject balls
         public void Intakeeject() {
-            intakeLauncherRoller.set(-.3);
+            intakeLauncherRoller.set(INTAKER_EJECT_SPEED);
         }
 
+
+        //Cretes method for Intake motor to intake balls
         public void IntakeIntake() {
-            intakeLauncherRoller.set(.3);
+            intakeLauncherRoller.set(INTAKER_INTAKING_SPEED);
         }
 
 
-
+        //Creates method for Intake mtor to stop
         public void stop() {
             intakeLauncherRoller.set(0);
         }
 
+        //Creates method to set speed for motor to launch balls at
         public void SpinUpandLaunch() {
-        intakeLauncherRoller.set(.3);
+        intakeLauncherRoller.set(INTAKER_LAUNCHING_SPEED);
         }
     
-        public void Intakeautointake() {    
-            intakeLauncherRoller.set(.1);
-        }
-
-
+        //Creates command for running SpinUpandLaunch method
         public Command spinUpCommand() {
         return this.run(() -> SpinUpandLaunch());
         }
 
-        public Command IntakeautointakeCommand() {
-            return this.run(() -> Intakeautointake());
-        }
-
+        //Creates command to eject balls
         public Command IntakeEjectCommand() {
             return this.run(() -> Intakeeject());
         }
 
+        //Creates command to intake balls
         public Command IntakeIntakeCommand() {
             return this.run(() -> IntakeIntake());
         }
