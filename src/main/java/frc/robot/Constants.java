@@ -39,14 +39,15 @@ public final class Constants {
     // Voltage values for various fuel operations. These values may need to be tuned
     // based on exact robot construction.
     // See the Software Guide for tuning information
-    public static final double Feeder_Eject_Speed = 0.7;
-    public static final double Feeder_Intake_Speed = -0.7;
-    public static final double Feeder_Launching_Speed = 0.55;
+    
+    public static final double Feeder_Eject_Speed = 0.9;
+    public static final double Feeder_Intake_Speed = -0.9;
+    public static final double Feeder_Launching_Speed = 1;
     public static final double Feeder_Auto_Intake_Speed = -0.6;
 
     public static final double IntakeLauncher_Eject_Speed = -.3;
     public static final double IntakeLauncher_Intake_Speed = .3;
-    public static final double IntakeLauncher_Launching_Speed = .2;
+    public static final double IntakeLauncher_Launching_Speed = .6;
     public static final double IntakeLauncher_Auto_Launching_Speed = .2;
     public static final double SPIN_UP_SECONDS = 1;
   }

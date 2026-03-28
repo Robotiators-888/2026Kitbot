@@ -1,17 +1,22 @@
 package frc.robot.subsystems;
 
+import com.revrobotics.spark.SparkBase.ControlType;
 import com.revrobotics.spark.SparkBase.PersistMode;
 import com.revrobotics.spark.SparkBase.ResetMode;
+import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.FuelConstants.*;
 public class SUB_IntakeLauncher extends SubsystemBase {
     private SparkMax intakeLauncherRoller;
     public Object stop;
+    private double TargetLauncherRPM = 0;
+    private SparkClosedLoopController LauncherController;
     
         @SuppressWarnings("removal")
         public SUB_IntakeLauncher() {
@@ -21,9 +26,20 @@ public class SUB_IntakeLauncher extends SubsystemBase {
 
             SparkMaxConfig launcherConfig = new SparkMaxConfig();
 
-            launcherConfig.smartCurrentLimit(LAUNCHER_MOTOR_CURRENT_LIMIT);
+            launcherConfig.smartCurrentLimit(70);
             intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    
+
+            double kP = 0.0007; // Aggressive P for rapid speed ramp
+            double kI = 0.0;
+            double kD = 0.0; 
+            double kFF = 0.0021; // Based on NEO nominal RPM at 12V
+            
+            launcherConfig.closedLoop.pid(kP, kI, kD);
+            launcherConfig.closedLoop.velocityFF(kFF);
+            intakeLauncherRoller.configure(launcherConfig, SparkMax.ResetMode.kResetSafeParameters, SparkMax.PersistMode.kPersistParameters);
+            
+            LauncherController = intakeLauncherRoller.getClosedLoopController();
+        
         }
     
     
@@ -35,8 +51,14 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             intakeLauncherRoller.set(IntakeLauncher_Intake_Speed);
         }
 
+        public void setLauncherRPM(double wheelRPM) {
+            TargetLauncherRPM = wheelRPM;
+            LauncherController.setReference(wheelRPM, ControlType.kVelocity);
+    }
 
 
+
+        
         public void stop() {
             intakeLauncherRoller.set(0);
         }
@@ -49,6 +71,9 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             intakeLauncherRoller.set(IntakeLauncher_Auto_Launching_Speed);
         }
 
+        public double LauncherRPM(){
+            return intakeLauncherRoller.getEncoder().getVelocity(); 
+        }
 
         public Command spinUpCommand() {
         return this.run(() -> SpinUpandLaunch());
@@ -64,6 +89,11 @@ public class SUB_IntakeLauncher extends SubsystemBase {
 
         public Command IntakeIntakeCommand() {
             return this.run(() -> IntakeIntake());
+        }
+
+        public void periodic() {
+            SmartDashboard.putNumber("Launcher RPM", LauncherRPM());
+        
         }
 
 
