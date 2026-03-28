@@ -46,7 +46,7 @@ public final class Constants {
     public static final double Feeder_Auto_Intake_Speed = -0.6;
 
     public static final double IntakeLauncher_Eject_Speed = -.3;
-    public static final double IntakeLauncher_Intake_Speed = .3;
+    public static final double IntakeLauncher_Intake_Speed = .4;
     public static final double IntakeLauncher_Launching_Speed = .6;
     public static final double IntakeLauncher_Auto_Launching_Speed = .2;
     public static final double SPIN_UP_SECONDS = 1;

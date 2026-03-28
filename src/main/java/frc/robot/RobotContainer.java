@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -35,6 +37,7 @@ public class RobotContainer {
   private final SUB_Drivetrain driveSubsystem = SUB_Drivetrain.getInstance();
   private final SUB_Feeder ballSubsystem = new SUB_Feeder();
   private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
+  private final PowerDistribution PDP = new PowerDistribution();
 
 
   // The driver's controller
@@ -84,7 +87,7 @@ public class RobotContainer {
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
     Driver1.rightTrigger()
-      .whileTrue(new RunCommand(() -> intakeSubsystem.setLauncherRPM(1500), intakeSubsystem));
+      .whileTrue(new RunCommand(() -> intakeSubsystem.setLauncherRPM(2250), intakeSubsystem));
         // .whileTrue(intakeSubsystem.spinUpCommand()
         //     .finallyDo(() -> intakeSubsystem.stop()));
         
@@ -125,6 +128,8 @@ public class RobotContainer {
 
   public void periodic() {
     LimelightHelpers.setLEDMode_ForceOn("lime");
+    SmartDashboard.putNumber("Batery Voltage", PDP.getVoltage());
+    SmartDashboard.putNumberArray("PDP channel Voltages", PDP.getAllCurrents());
     
   }
   /**
