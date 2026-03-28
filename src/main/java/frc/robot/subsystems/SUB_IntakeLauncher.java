@@ -52,6 +52,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             intakeLauncherRoller.set(IntakeLauncher_Intake_Speed);
         }
 
+        @SuppressWarnings("removal")
         public void setLauncherRPM(double wheelRPM) {
             TargetLauncherRPM = wheelRPM;
             LauncherController.setReference(wheelRPM, ControlType.kVelocity);
