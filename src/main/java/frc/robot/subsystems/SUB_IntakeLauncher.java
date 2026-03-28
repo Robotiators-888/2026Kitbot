@@ -17,6 +17,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
     public Object stop;
     private double TargetLauncherRPM = 0;
     private SparkClosedLoopController LauncherController;
+
     
         @SuppressWarnings("removal")
         public SUB_IntakeLauncher() {
@@ -55,6 +56,9 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             TargetLauncherRPM = wheelRPM;
             LauncherController.setReference(wheelRPM, ControlType.kVelocity);
     }
+        public boolean UptoSpeed() {
+            return Math.abs(TargetLauncherRPM - intakeLauncherRoller.getEncoder().getVelocity()) < 50;
+        }
 
 
 
@@ -95,6 +99,10 @@ public class SUB_IntakeLauncher extends SubsystemBase {
         public void periodic() {
             SmartDashboard.putNumber("Launcher RPM", LauncherRPM());
             SmartDashboard.putNumber("Launcher DesiredRPM", TargetLauncherRPM);
+            SmartDashboard.putBoolean("Launcher Up to Speed", UptoSpeed());
+            SmartDashboard.putNumber("Launcher Voltage", intakeLauncherRoller.getBusVoltage());
+            SmartDashboard.putNumber("Launcher Current", intakeLauncherRoller.getOutputCurrent());
+            SmartDashboard.putNumber("Launcher Temp", intakeLauncherRoller.getMotorTemperature());
         
         }
 

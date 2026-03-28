@@ -127,7 +127,7 @@ public class RobotContainer {
      
 
   public void periodic() {
-    LimelightHelpers.setLEDMode_ForceOn("lime");
+
     SmartDashboard.putNumber("Batery Voltage", PDP.getVoltage());
     SmartDashboard.putNumberArray("PDP channel Voltages", PDP.getAllCurrents());
     

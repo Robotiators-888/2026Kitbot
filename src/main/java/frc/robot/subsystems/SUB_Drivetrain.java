@@ -161,7 +161,10 @@ public class SUB_Drivetrain extends SubsystemBase {
 
 
     
-    
+    SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
+    SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
+    SmartDashboard.putNumber("RightLeader Voltage", rightLeader.getBusVoltage());
+    SmartDashboard.putNumber("RightFollower Voltage", rightFollower.getBusVoltage());
     // Convert to chassis speeds.
 
   }
