@@ -45,6 +45,8 @@ public class SUB_Drivetrain extends SubsystemBase {
   public final DifferentialDrivePoseEstimator m_poseEstimator;
   public DifferentialDriveWheelSpeeds wheelSpeeds;
   public DifferentialDriveWheelSpeeds past_wheelSpeeds;
+  public double DistancetraveledLeft = 0;
+  public double Distancetraveledright = 0;
 
 
   public final Field2d field;
@@ -84,6 +86,8 @@ public class SUB_Drivetrain extends SubsystemBase {
 
     past_wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
     wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
+  
+    
 
 
     
@@ -132,23 +136,26 @@ public class SUB_Drivetrain extends SubsystemBase {
  @Override
   public void periodic() {
     wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters(10.91)*leftLeader.get(), Units.feetToMeters(10.91)*rightLeader.get());
-    
+    DistancetraveledLeft = DistancetraveledLeft + .02*past_wheelSpeeds.leftMetersPerSecond;
+    Distancetraveledright = Distancetraveledright + .02* past_wheelSpeeds.rightMetersPerSecond;
 
     m_poseEstimator.update(
-        navx.getRotation2d(), .02 * wheelSpeeds.leftMetersPerSecond, 
-            .02 * past_wheelSpeeds.rightMetersPerSecond);
+        navx.getRotation2d(), DistancetraveledLeft, 
+            Distancetraveledright);
             // In your periodic function:
  
         past_wheelSpeeds = wheelSpeeds;
 
     
+        
    LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
     if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
         m_poseEstimator.addVisionMeasurement(
-            limelightMeasurement.pose,
+            LimelightHelpers.getBotPose2d("lime"),
             limelightMeasurement.timestampSeconds
         );
+    }
     //field.setRobotPose(m_poseEstimator.getEstimatedPosition());
 
     //field.setRobotPose(LimelightHelpers.getBotPose2d_wpiBlue(""));
@@ -156,17 +163,19 @@ public class SUB_Drivetrain extends SubsystemBase {
 
 
 
-    field.setRobotPose(4,5,navx.getRotation2d());
+    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
     robotposepublisher.set(field.getRobotPose());
 
 
     
+        // Convert to chassis speeds.
+
+  
     SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
     SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
     SmartDashboard.putNumber("RightLeader Voltage", rightLeader.getBusVoltage());
     SmartDashboard.putNumber("RightFollower Voltage", rightFollower.getBusVoltage());
-    // Convert to chassis speeds.
 
-  }
 }
+
 }
