@@ -7,8 +7,9 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.studica.frc.AHRS;
-
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.RelativeEncoder;
 
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
@@ -16,6 +17,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -40,6 +42,9 @@ public class SUB_Drivetrain extends SubsystemBase {
   private final WPI_TalonSRX leftFollower;
   private final WPI_TalonSRX rightLeader;
   private final WPI_TalonSRX rightFollower;
+
+  DifferentialDriveOdometry driveOdometry;
+  
   public final AHRS navx;
   public  DifferentialDriveKinematics m_kinematics;
   public final DifferentialDrivePoseEstimator m_poseEstimator;
@@ -67,8 +72,14 @@ public class SUB_Drivetrain extends SubsystemBase {
     leftFollower = new WPI_TalonSRX(LEFT_FOLLOWER_ID);
     rightLeader = new WPI_TalonSRX(RIGHT_LEADER_ID);
     rightFollower = new WPI_TalonSRX(RIGHT_FOLLOWER_ID);
+    leftLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    rightLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 
     navx = new AHRS(AHRS.NavXComType.kMXP_SPI);
+
+    driveOdometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftLeader.getSelectedSensorPosition(), 
+    rightLeader.getSelectedSensorPosition(),
+    new Pose2d());
 
     LimelightHelpers.setCameraPose_RobotSpace("lime",
           Limelight_Forward_distance, 
@@ -86,10 +97,6 @@ public class SUB_Drivetrain extends SubsystemBase {
 
     past_wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
     wheelSpeeds = new DifferentialDriveWheelSpeeds(0,0);
-  
-    
-
-
     
 
     m_kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(23.0));
@@ -121,7 +128,7 @@ public class SUB_Drivetrain extends SubsystemBase {
 
 
 
-
+  
   // Command factory to create command to drive the robot with joystick inputs.
   public Command driveArcade(DoubleSupplier xSpeed, DoubleSupplier zRotation) {
     return this.run(
@@ -130,21 +137,40 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   StructPublisher<Pose2d> robotposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("MyPose",Pose2d.struct).publish();
+
+    StructPublisher<Pose2d> Navxrobotposepublisher = NetworkTableInstance.getDefault()
+    .getStructTopic("NavxPose",Pose2d.struct).publish();
+
   
 
 
  @Override
   public void periodic() {
-    wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters(10.91)*leftLeader.get(), Units.feetToMeters(10.91)*rightLeader.get());
-    DistancetraveledLeft = DistancetraveledLeft + .02*past_wheelSpeeds.leftMetersPerSecond;
-    Distancetraveledright = Distancetraveledright + .02* past_wheelSpeeds.rightMetersPerSecond;
 
-    m_poseEstimator.update(
-        navx.getRotation2d(), DistancetraveledLeft, 
-            Distancetraveledright);
-            // In your periodic function:
+
+    SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
+    SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
+    SmartDashboard.putNumber("RightLeader Voltage", rightLeader.getBusVoltage());
+    SmartDashboard.putNumber("RightFollower Voltage", rightFollower.getBusVoltage());
+    SmartDashboard.putNumber("Left Side Speed", leftLeader.getSensorCollection().getQuadratureVelocity());
+    SmartDashboard.putNumber("Right Side Speed", rightLeader.getSensorCollection().getQuadratureVelocity());
+
+
+    // wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
+    // DistancetraveledLeft = DistancetraveledLeft + .02*past_wheelSpeeds.leftMetersPerSecond;
+    // Distancetraveledright = Distancetraveledright + .02* past_wheelSpeeds.rightMetersPerSecond;
+
+    // m_poseEstimator.update(
+    //     navx.getRotation2d(), 
+    //       DistancetraveledLeft, 
+    //       Distancetraveledright);
+    //         // In your periodic function:
  
-        past_wheelSpeeds = wheelSpeeds;
+    //     past_wheelSpeeds = wheelSpeeds;
+
+
+
+    
 
     
         
@@ -160,19 +186,19 @@ public class SUB_Drivetrain extends SubsystemBase {
    field.getRobotObject();
 
 
-
-    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
-    robotposepublisher.set(field.getRobotPose());
+    field.setRobotPose(navx.getDisplacementX(), navx.getDisplacementY(), navx.getRotation2d());
+    
+    //field.setRobotPose(driveOdometry.getPoseMeters());
+    robotposepublisher.set(driveOdometry.getPoseMeters());
+    Navxrobotposepublisher.set(field.getRobotPose());
 
 
     
         // Convert to chassis speeds.
 
   
-    SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
-    SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
-    SmartDashboard.putNumber("RightLeader Voltage", rightLeader.getBusVoltage());
-    SmartDashboard.putNumber("RightFollower Voltage", rightFollower.getBusVoltage());
+
+
 
 }
 
