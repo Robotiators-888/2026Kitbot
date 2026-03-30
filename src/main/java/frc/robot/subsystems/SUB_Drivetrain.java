@@ -197,7 +197,8 @@ public class SUB_Drivetrain extends SubsystemBase {
    field.getRobotObject();
    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
    robotposepublisher.set(field.getRobotPose());
-   limelightposepublisher.set(LimelightHelpers.getBotPose2d_wpiBlue("lime"));
+
+  limelightposepublisher.set(limelightMeasurement.pose);
 
 
 
