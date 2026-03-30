@@ -20,6 +20,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -171,15 +172,9 @@ public class SUB_Drivetrain extends SubsystemBase {
     Distancetraveledright = Distancetraveledright + .02 * past_wheelSpeeds.rightMetersPerSecond;
 
    
-    m_poseEstimator.update(
-        navx.getRotation2d(), 
-          DistancetraveledLeft, 
-          Distancetraveledright);
-            // In your periodic function:
- 
-        past_wheelSpeeds = wheelSpeeds;
 
 
+    
 
     
 
@@ -194,6 +189,14 @@ public class SUB_Drivetrain extends SubsystemBase {
         );
     }
 
+  m_poseEstimator.update(
+  navx.getRotation2d(), 
+    DistancetraveledLeft, 
+    Distancetraveledright);
+      // In your periodic function:
+
+  past_wheelSpeeds = wheelSpeeds;
+  m_poseEstimator.addVisionMeasurement(limelightMeasurement.pose, Timer.getFPGATimestamp());
    field.getRobotObject();
    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
    robotposepublisher.set(field.getRobotPose());
