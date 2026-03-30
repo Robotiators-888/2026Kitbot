@@ -15,7 +15,8 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 
 import edu.wpi.first.math.geometry.Pose2d;
-
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -46,12 +47,14 @@ public class SUB_Drivetrain extends SubsystemBase {
   DifferentialDriveOdometry driveOdometry;
   
   public final AHRS navx;
+  private Rotation2d pastYaw;
   public  DifferentialDriveKinematics m_kinematics;
   public final DifferentialDrivePoseEstimator m_poseEstimator;
   public DifferentialDriveWheelSpeeds wheelSpeeds;
   public DifferentialDriveWheelSpeeds past_wheelSpeeds;
   public double DistancetraveledLeft = 0;
   public double Distancetraveledright = 0;
+  
 
 
   public final Field2d field;
@@ -76,10 +79,13 @@ public class SUB_Drivetrain extends SubsystemBase {
     rightLeader.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 
     navx = new AHRS(AHRS.NavXComType.kMXP_SPI);
+    pastYaw = navx.getRotation2d();
 
     driveOdometry = new DifferentialDriveOdometry(navx.getRotation2d(), leftLeader.getSelectedSensorPosition(), 
     rightLeader.getSelectedSensorPosition(),
     new Pose2d());
+
+  
 
     LimelightHelpers.setCameraPose_RobotSpace("lime",
           Limelight_Forward_distance, 
@@ -141,32 +147,37 @@ public class SUB_Drivetrain extends SubsystemBase {
     StructPublisher<Pose2d> Navxrobotposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("NavxPose",Pose2d.struct).publish();
 
+    
   
 
 
  @Override
   public void periodic() {
+    
+    
 
 
     SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
     SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
-    SmartDashboard.putNumber("RightLeader Voltage", rightLeader.getBusVoltage());
-    SmartDashboard.putNumber("RightFollower Voltage", rightFollower.getBusVoltage());
+    SmartDashboard.putNumber("RightLeader speed", rightLeader.get());
+    SmartDashboard.putNumber("Leftleader speed", leftLeader.get());
     SmartDashboard.putNumber("Left Side Speed", leftLeader.getSensorCollection().getQuadratureVelocity());
     SmartDashboard.putNumber("Right Side Speed", rightLeader.getSensorCollection().getQuadratureVelocity());
 
 
-    // wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
-    // DistancetraveledLeft = DistancetraveledLeft + .02*past_wheelSpeeds.leftMetersPerSecond;
-    // Distancetraveledright = Distancetraveledright + .02* past_wheelSpeeds.rightMetersPerSecond;
+    //wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
+    wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters((10.91 *(leftLeader.getBusVoltage()*leftLeader.get()/12))),Units.feetToMeters(10.91* (rightLeader.getBusVoltage()*-1*rightLeader.get()/12)));
+    DistancetraveledLeft = DistancetraveledLeft + .02 * past_wheelSpeeds.leftMetersPerSecond;
+    Distancetraveledright = Distancetraveledright + .02 * past_wheelSpeeds.rightMetersPerSecond;
 
-    // m_poseEstimator.update(
-    //     navx.getRotation2d(), 
-    //       DistancetraveledLeft, 
-    //       Distancetraveledright);
-    //         // In your periodic function:
+   
+    m_poseEstimator.update(
+        navx.getRotation2d(), 
+          DistancetraveledLeft, 
+          Distancetraveledright);
+            // In your periodic function:
  
-    //     past_wheelSpeeds = wheelSpeeds;
+        past_wheelSpeeds = wheelSpeeds;
 
 
 
@@ -184,13 +195,29 @@ public class SUB_Drivetrain extends SubsystemBase {
   //   }
 
    field.getRobotObject();
+   field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+   robotposepublisher.set(field.getRobotPose());
 
 
-    field.setRobotPose(navx.getDisplacementX(), navx.getDisplacementY(), navx.getRotation2d());
+    // field.setRobotPose(navx.getDisplacementX(), navx.getDisplacementY(), navx.getRotation2d());
     
     //field.setRobotPose(driveOdometry.getPoseMeters());
-    robotposepublisher.set(driveOdometry.getPoseMeters());
-    Navxrobotposepublisher.set(field.getRobotPose());
+    // robotposepublisher.set(driveOdometry.getPoseMeters());
+    // Navxrobotposepublisher.set(field.getRobotPose());
+
+    // Translation2d past = new Translation2d(Units.inchesToMeters(8), Units.inchesToMeters(7));
+    // Translation2d current = new Translation2d(Units.inchesToMeters(8), Units.inchesToMeters(7));
+    // past.rotateBy(new Rotation2d(pastYaw.getRadians()));
+    // current.rotateBy(new Rotation2d(navx.getRotation2d().getRadians()));
+    // Translation2d difference = past.minus(current);
+    // Translation2d combined = new Translation2d(navx.getDisplacementX(), navx.getDisplacementY()).rotateBy(navx.getRotation2d()).plus(difference);
+
+    // field.setRobotPose(combined.getMeasureX(), combined.getMeasureY(), navx.getRotation2d());
+    // SmartDashboard.putNumber("Past Yaw", pastYaw.getDegrees());
+    // SmartDashboard.putNumber("Current Yaw", navx.getRotation2d().getDegrees());
+
+    // pastYaw = navx.getRotation2d();
+    
 
 
     
@@ -203,3 +230,4 @@ public class SUB_Drivetrain extends SubsystemBase {
 }
 
 }
+
