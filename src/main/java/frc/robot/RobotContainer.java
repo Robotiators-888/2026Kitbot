@@ -102,8 +102,8 @@ public class RobotContainer {
       (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
     );
 
-    Driver1.a().onTrue(
-      new InstantCommand(() ->driveSubsystem.navx.resetDisplacement())
+    Driver1.leftStick().onTrue(
+      new InstantCommand(() ->driveSubsystem.navx.reset())
     );
 
 

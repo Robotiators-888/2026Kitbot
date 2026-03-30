@@ -88,7 +88,7 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   
 
-    LimelightHelpers.setCameraPose_RobotSpace("lime",
+    LimelightHelpers.setCameraPose_RobotSpace("",
           Limelight_Forward_distance, 
           Limelight_Side_distance, 
           Limelight_Up_distance, 
@@ -164,6 +164,7 @@ public class SUB_Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("Leftleader speed", leftLeader.get());
     SmartDashboard.putNumber("Left Side Speed", leftLeader.getSensorCollection().getQuadratureVelocity());
     SmartDashboard.putNumber("Right Side Speed", rightLeader.getSensorCollection().getQuadratureVelocity());
+    SmartDashboard.putNumber("TX value", LimelightHelpers.getTX(""));
 
 
     //wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
@@ -180,15 +181,17 @@ public class SUB_Drivetrain extends SubsystemBase {
 
     
         
-   LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
+   LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
     if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
         m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
         m_poseEstimator.addVisionMeasurement(
             limelightMeasurement.pose,
-            limelightMeasurement.timestampSeconds
-        );
+            limelightMeasurement.timestampSeconds);
+        navx.setAngleAdjustment(limelightMeasurement.pose.getRotation().getDegrees());
+        m_poseEstimator.addVisionMeasurement(limelightMeasurement.pose, Timer.getFPGATimestamp());
+  
+        
     }
-
   m_poseEstimator.update(
   navx.getRotation2d(), 
     DistancetraveledLeft, 
@@ -196,7 +199,7 @@ public class SUB_Drivetrain extends SubsystemBase {
       // In your periodic function:
 
   past_wheelSpeeds = wheelSpeeds;
-  m_poseEstimator.addVisionMeasurement(limelightMeasurement.pose, Timer.getFPGATimestamp());
+  
    field.getRobotObject();
    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
    robotposepublisher.set(field.getRobotPose());
