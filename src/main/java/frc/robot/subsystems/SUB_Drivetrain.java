@@ -144,8 +144,8 @@ public class SUB_Drivetrain extends SubsystemBase {
   StructPublisher<Pose2d> robotposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("MyPose",Pose2d.struct).publish();
 
-    StructPublisher<Pose2d> Navxrobotposepublisher = NetworkTableInstance.getDefault()
-    .getStructTopic("NavxPose",Pose2d.struct).publish();
+    StructPublisher<Pose2d> limelightposepublisher = NetworkTableInstance.getDefault()
+    .getStructTopic("LLPose",Pose2d.struct).publish();
 
     
   
@@ -185,18 +185,20 @@ public class SUB_Drivetrain extends SubsystemBase {
 
     
         
-  //  LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
-  //   if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
-  //       m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
-  //       m_poseEstimator.addVisionMeasurement(
-  //           LimelightHelpers.getBotPose2d("lime"),
-  //           limelightMeasurement.timestampSeconds
-  //       );
-  //   }
+   LimelightHelpers.PoseEstimate limelightMeasurement = LimelightHelpers.getBotPoseEstimate_wpiBlue("lime");
+    if (limelightMeasurement.tagCount >= 2) {  // Only trust measurement if we see multiple tags
+        m_poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(0.7, 0.7, 9999999));
+        m_poseEstimator.addVisionMeasurement(
+            limelightMeasurement.pose,
+            limelightMeasurement.timestampSeconds
+        );
+    }
 
    field.getRobotObject();
    field.setRobotPose(m_poseEstimator.getEstimatedPosition());
    robotposepublisher.set(field.getRobotPose());
+   limelightposepublisher.set(LimelightHelpers.getBotPose2d_wpiBlue("lime"));
+
 
 
     // field.setRobotPose(navx.getDisplacementX(), navx.getDisplacementY(), navx.getRotation2d());
