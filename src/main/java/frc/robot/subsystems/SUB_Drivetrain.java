@@ -17,6 +17,7 @@ import edu.wpi.first.math.estimator.DifferentialDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
@@ -86,6 +87,11 @@ public class SUB_Drivetrain extends SubsystemBase {
     rightLeader.getSelectedSensorPosition(),
     new Pose2d());
 
+    leftLeader.configContinuousCurrentLimit(40);
+    rightLeader.configContinuousCurrentLimit(40);
+    leftFollower.configContinuousCurrentLimit(40);
+    rightFollower.configContinuousCurrentLimit(40);
+
   
 
     LimelightHelpers.setCameraPose_RobotSpace("",
@@ -148,9 +154,32 @@ public class SUB_Drivetrain extends SubsystemBase {
     StructPublisher<Pose2d> limelightposepublisher = NetworkTableInstance.getDefault()
     .getStructTopic("LLPose",Pose2d.struct).publish();
 
-    
   
 
+  public Pose2d getpose() {
+    return m_poseEstimator.getEstimatedPosition();
+  }
+
+  public void resetPose(Pose2d pose) {
+    //zeroEncoders();
+    m_poseEstimator.resetPosition(navx.getRotation2d(),DistancetraveledLeft, Distancetraveledright,
+        pose);
+  }
+
+  public ChassisSpeeds getChassisSpeeds() {
+    return m_kinematics.toChassisSpeeds(wheelSpeeds);
+  }
+
+  public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
+    driveRobotRelative(
+        ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getpose().getRotation()));
+  }
+
+  public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
+    ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+    //TODO:Find uses for TargetSpeeds, driveRobotRelative is needed.
+  }
 
  @Override
   public void periodic() {
@@ -162,9 +191,7 @@ public class SUB_Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
     SmartDashboard.putNumber("RightLeader speed", rightLeader.get());
     SmartDashboard.putNumber("Leftleader speed", leftLeader.get());
-    SmartDashboard.putNumber("Left Side Speed", leftLeader.getSensorCollection().getQuadratureVelocity());
-    SmartDashboard.putNumber("Right Side Speed", rightLeader.getSensorCollection().getQuadratureVelocity());
-    SmartDashboard.putNumber("TX value", LimelightHelpers.getTX(""));
+
 
 
     //wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
@@ -187,6 +214,7 @@ public class SUB_Drivetrain extends SubsystemBase {
         m_poseEstimator.addVisionMeasurement(
             limelightMeasurement.pose,
             limelightMeasurement.timestampSeconds);
+        navx.reset();
         navx.setAngleAdjustment(limelightMeasurement.pose.getRotation().getDegrees());
         m_poseEstimator.addVisionMeasurement(limelightMeasurement.pose, Timer.getFPGATimestamp());
   
@@ -200,43 +228,25 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   past_wheelSpeeds = wheelSpeeds;
   
-   field.getRobotObject();
-   field.setRobotPose(m_poseEstimator.getEstimatedPosition());
-   robotposepublisher.set(field.getRobotPose());
+  field.getRobotObject();
+  field.setRobotPose(m_poseEstimator.getEstimatedPosition());
+  robotposepublisher.set(field.getRobotPose());
 
   limelightposepublisher.set(limelightMeasurement.pose);
 
+  
 
 
-    // field.setRobotPose(navx.getDisplacementX(), navx.getDisplacementY(), navx.getRotation2d());
-    
-    //field.setRobotPose(driveOdometry.getPoseMeters());
-    // robotposepublisher.set(driveOdometry.getPoseMeters());
-    // Navxrobotposepublisher.set(field.getRobotPose());
 
-    // Translation2d past = new Translation2d(Units.inchesToMeters(8), Units.inchesToMeters(7));
-    // Translation2d current = new Translation2d(Units.inchesToMeters(8), Units.inchesToMeters(7));
-    // past.rotateBy(new Rotation2d(pastYaw.getRadians()));
-    // current.rotateBy(new Rotation2d(navx.getRotation2d().getRadians()));
-    // Translation2d difference = past.minus(current);
-    // Translation2d combined = new Translation2d(navx.getDisplacementX(), navx.getDisplacementY()).rotateBy(navx.getRotation2d()).plus(difference);
-
-    // field.setRobotPose(combined.getMeasureX(), combined.getMeasureY(), navx.getRotation2d());
-    // SmartDashboard.putNumber("Past Yaw", pastYaw.getDegrees());
-    // SmartDashboard.putNumber("Current Yaw", navx.getRotation2d().getDegrees());
-
-    // pastYaw = navx.getRotation2d();
-    
-
-
-    
-        // Convert to chassis speeds.
+   
 
   
 
 
 
 }
+
+    
 
 }
 

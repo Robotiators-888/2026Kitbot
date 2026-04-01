@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import static frc.robot.Constants.DriveConstants.BlueHubXMeters;
+import static frc.robot.Constants.DriveConstants.BlueHubYMeters;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -18,7 +21,6 @@ public class SUB_AutoAlign {
     .getStructTopic("HubPose",Pose2d.struct).publish();
 
     public void periodic() {
-        hubposepuPublisher.set(Bluehub);
     }
 
 }

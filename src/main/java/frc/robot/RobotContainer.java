@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,7 +20,15 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 
 import static frc.robot.Constants.OperatorConstants.*;
+
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
+
+import choreo.auto.AutoChooser;
+
 import static frc.robot.Constants.FuelConstants.*;
+
+import frc.robot.Utils.AutoGenerator;
 import frc.robot.subsystems.SUB_Drivetrain;
 import frc.robot.subsystems.SUB_Feeder;
 import frc.robot.subsystems.SUB_IntakeLauncher;
@@ -38,6 +47,8 @@ public class RobotContainer {
   private final SUB_Feeder ballSubsystem = new SUB_Feeder();
   private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
   private final PowerDistribution PDP = new PowerDistribution();
+  private final AutoGenerator autoGenerator = AutoGenerator.getInstance();
+  private final SendableChooser<Command> autoChooser;
 
 
   // The driver's controller
@@ -56,6 +67,11 @@ public class RobotContainer {
    */
   public RobotContainer() {
     configureBindings();
+
+    NamedCommands.registerCommand("SpinUp", intakeSubsystem.spinUpCommand());
+    NamedCommands.registerCommand("FeedTolauncher", ballSubsystem.feedCommand());
+    autoChooser = AutoBuilder.buildAutoChooser();
+
 
     // Set the options to show up in the Dashboard for selecting auto modes. If you
     // add additional auto modes you can add additional lines here with
@@ -141,34 +157,39 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
   public Command getAutonomousCommand() {
-    
-    // An example command will be run in autonomous
-    return new SequentialCommandGroup(
-        // Drive backwards for 1 seconds. The driveArcadeAuto command factory
-        // creates a command which does not end which allows us to control
-        // the timing using the withTimeout decorator
-        Commands.parallel(
-          driveSubsystem.driveArcade(() -> 0, ()-> .65).withTimeout(1),
-          intakeSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
-        ),
-        
-        // Stop driving. This line uses the regular driveArcade command factory so it
-        // ends immediately after commanding the motors to stop
-        driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
-
-        Commands.repeatingSequence(
-        intakeSubsystem.spinUpCommand().withTimeout(1),
-
-        new ParallelCommandGroup(
-          intakeSubsystem.spinUpCommand().withTimeout(.5),
-          ballSubsystem.feedCommand().withTimeout(.5)
-
-        )
-
-        )
-    );
-
-
+    return autoChooser.getSelected();
+    // return new TestAuto();
   }
+  // public Command getAutonomousCommand() {
+    
+  //   // An example command will be run in autonomous
+  //   return new SequentialCommandGroup(
+  //       // Drive backwards for 1 seconds. The driveArcadeAuto command factory
+  //       // creates a command which does not end which allows us to control
+  //       // the timing using the withTimeout decorator
+  //       Commands.parallel(
+  //         driveSubsystem.driveArcade(() -> 0, ()-> .65).withTimeout(1),
+  //         intakeSubsystem.spinUpCommand().withTimeout(SPIN_UP_SECONDS)
+  //       ),
+        
+  //       // Stop driving. This line uses the regular driveArcade command factory so it
+  //       // ends immediately after commanding the motors to stop
+  //       driveSubsystem.driveArcade(() -> 0, () -> 0).withTimeout(.01),
+
+  //       Commands.repeatingSequence(
+  //       intakeSubsystem.spinUpCommand().withTimeout(1),
+
+  //       new ParallelCommandGroup(
+  //         intakeSubsystem.spinUpCommand().withTimeout(.5),
+  //         ballSubsystem.feedCommand().withTimeout(.5)
+
+  //       )
+
+  //       )
+  //   );
+
+
+  // }
 }
