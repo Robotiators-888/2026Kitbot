@@ -30,7 +30,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             launcherConfig.smartCurrentLimit(70);
             intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 
-            double kP = 0.0003; // Aggressive P for rapid speed ramp
+            double kP = 0.0005; // Aggressive P for rapid speed ramp
             double kI = 0.0;
             double kD = 0.0; 
             double kFF = 0.0024455696*1.02552416; // Based on NEO nominal RPM at 12V
