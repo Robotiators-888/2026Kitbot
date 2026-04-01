@@ -162,6 +162,8 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   public void resetPose(Pose2d pose) {
     //zeroEncoders();
+    DistancetraveledLeft = 0;
+    Distancetraveledright = 0;
     m_poseEstimator.resetPosition(navx.getRotation2d(),DistancetraveledLeft, Distancetraveledright,
         pose);
   }
@@ -178,7 +180,6 @@ public class SUB_Drivetrain extends SubsystemBase {
   public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds) {
     ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
 
-    //TODO:Find uses for TargetSpeeds, driveRobotRelative is needed.
   }
 
  @Override
@@ -187,8 +188,8 @@ public class SUB_Drivetrain extends SubsystemBase {
     
 
 
-    SmartDashboard.putNumber("Leftleader Voltage", leftLeader.getBusVoltage());
-    SmartDashboard.putNumber("LeftFollower Voltage", leftFollower.getBusVoltage());
+    SmartDashboard.putNumber("Leftleader Current Draw", leftLeader.getSupplyCurrent());
+    SmartDashboard.putNumber("RightLeader Current Draw", rightLeader.getSupplyCurrent());
     SmartDashboard.putNumber("RightLeader speed", rightLeader.get());
     SmartDashboard.putNumber("Leftleader speed", leftLeader.get());
 
