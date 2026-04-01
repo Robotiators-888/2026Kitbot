@@ -5,9 +5,22 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": null
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "SpinUp"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedTolauncher"
+                }
+              }
+            ]
           }
         }
       ]
