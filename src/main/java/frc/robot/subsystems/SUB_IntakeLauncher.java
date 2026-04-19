@@ -17,6 +17,14 @@ public class SUB_IntakeLauncher extends SubsystemBase {
     public Object stop;
     private double TargetLauncherRPM = 0;
     private SparkClosedLoopController LauncherController;
+    private static SUB_IntakeLauncher INSTANCE = null;
+
+    public static SUB_IntakeLauncher getInstance(){
+    if (INSTANCE ==null) {
+      INSTANCE = new SUB_IntakeLauncher();
+    }
+    return INSTANCE;
+  }
 
     
         @SuppressWarnings("removal")

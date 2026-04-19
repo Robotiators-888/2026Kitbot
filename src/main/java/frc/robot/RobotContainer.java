@@ -99,8 +99,7 @@ public class RobotContainer {
   
   private void configureBindings() {
 
-    Driver1.rightStick().whileTrue(
-      new RunCommand(() -> driveSubsystem.Rotate(), driveSubsystem));
+
     
          
     
@@ -117,6 +116,11 @@ public class RobotContainer {
       .whileTrue(new RunCommand(() -> intakeSubsystem.setLauncherRPM(2250), intakeSubsystem));
         // .whileTrue(intakeSubsystem.spinUpCommand()
         //     .finallyDo(() -> intakeSubsystem.stop()));
+    Driver1.rightTrigger()  //Waterfall
+      .whileTrue(new ParallelCommandGroup( 
+        new RunCommand(() -> intakeSubsystem.setLauncherRPM(750), intakeSubsystem),
+        (ballSubsystem.feedCommand().finallyDo(() -> ballSubsystem.stop())))
+      );
         
     Driver1.leftTrigger()
         .whileTrue(ballSubsystem.feedCommand()

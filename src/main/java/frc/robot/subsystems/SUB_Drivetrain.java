@@ -187,13 +187,7 @@ public class SUB_Drivetrain extends SubsystemBase {
         () -> drive.arcadeDrive(xSpeed.getAsDouble(), zRotation.getAsDouble()));
   }
 
-  public void Rotate() {
-    if ((angleoffset.plus(navx.getRotation2d()).getDegrees() > getdesiredangle()) == true) {
-      driveArcade(() -> .2, () -> 0);
-    } else {
-      driveArcade(() -> -.2, () -> 0);
-    }
-  }
+
 
 
   StructPublisher<Pose2d> robotposepublisher = NetworkTableInstance.getDefault()
