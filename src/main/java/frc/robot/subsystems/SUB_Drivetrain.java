@@ -164,16 +164,19 @@ public class SUB_Drivetrain extends SubsystemBase {
 
   };
 
-  public Rotation2d getdesiredangle() {
-    return new Rotation2d(
+  public double getdesiredangle() {
+    double desiredangledegrees = new Rotation2d(
       targetTranslation.getX() - m_poseEstimator.getEstimatedPosition().getX(),
       targetTranslation.getY() - m_poseEstimator.getEstimatedPosition().getY()
-      );
+      ).getDegrees();
+    if (desiredangledegrees < 0) {
+      desiredangledegrees = desiredangledegrees + 360;
+    }
+    return desiredangledegrees;
+    
   }
 
-  public Boolean AutoAlign() {
-    return (angleoffset.plus(navx.getRotation2d()).getDegrees() > getdesiredangle().getDegrees());
-  }
+
 
 
 
@@ -185,7 +188,7 @@ public class SUB_Drivetrain extends SubsystemBase {
   }
 
   public void Rotate() {
-    if (AutoAlign() == true) {
+    if ((angleoffset.plus(navx.getRotation2d()).getDegrees() > getdesiredangle()) == true) {
       driveArcade(() -> .2, () -> 0);
     } else {
       driveArcade(() -> -.2, () -> 0);
@@ -244,9 +247,9 @@ public class SUB_Drivetrain extends SubsystemBase {
     SmartDashboard.putNumber("RightLeader Current Draw", rightLeader.getSupplyCurrent());
     SmartDashboard.putNumber("RightLeader speed", rightLeader.get());
     SmartDashboard.putNumber("Leftleader speed", leftLeader.get());
-    SmartDashboard.putNumber("Desired Angle", getdesiredangle().getDegrees());
+    SmartDashboard.putNumber("Desired Angle", getdesiredangle());
     SmartDashboard.putNumber("Current Angle", angleoffset.plus(navx.getRotation2d()).getDegrees());
-    SmartDashboard.putBoolean("test", AutoAlign());
+
 
     //wheelSpeeds = new DifferentialDriveWheelSpeeds(leftLeader.getSensorCollection().getQuadratureVelocity(), rightLeader.getSensorCollection().getQuadratureVelocity());
     wheelSpeeds = new DifferentialDriveWheelSpeeds(Units.feetToMeters((10.91 *(leftLeader.getBusVoltage()*leftLeader.get()/12))),Units.feetToMeters(10.91* (rightLeader.getBusVoltage()*-1*rightLeader.get()/12)));
