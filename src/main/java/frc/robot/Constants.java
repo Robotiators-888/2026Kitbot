@@ -57,9 +57,9 @@ public final class Constants {
   }
 
   public static final class LimelightConsants {
-    public static final double Limelight_Forward_distance = 0.33; //meters forward from center of robot
+    public static final double Limelight_Forward_distance = Units.inchesToMeters(14); //meters forward from center of robot
     public static final double Limelight_Side_distance = 0;
-    public static final double Limelight_Up_distance = 0.27;
+    public static final double Limelight_Up_distance = Units.inchesToMeters(17);
     public static final double Limelight_Roll_angle = 0; //degrees
     public static final double Limelight_Pitch_angle = 0;
     public static final double Limelight_Yaw_angle = 0;

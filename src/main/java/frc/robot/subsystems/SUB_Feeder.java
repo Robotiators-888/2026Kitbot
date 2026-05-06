@@ -20,7 +20,7 @@ import static frc.robot.Constants.FuelConstants.*;
 
 
 public class SUB_Feeder extends SubsystemBase {
-  private final SUB_IntakeLauncher launcherSubsystem = SUB_IntakeLauncher.getInstance();
+  
   private final Spark feederRoller;
 
 

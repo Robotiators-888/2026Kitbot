@@ -112,13 +112,13 @@ public class RobotContainer {
     ));
     // While the right bumper on the operator controller is held, spin up for 1
     // second, then launch fuel. When the button is released, stop.
-    Driver1.rightTrigger()
-      .whileTrue(new RunCommand(() -> intakeSubsystem.setLauncherRPM(2250), intakeSubsystem));
+    // Driver1.rightTrigger()
+    //   .whileTrue(new RunCommand(() -> intakeSubsystem.setLauncherRPM(2250), intakeSubsystem));
         // .whileTrue(intakeSubsystem.spinUpCommand()
         //     .finallyDo(() -> intakeSubsystem.stop()));
     Driver1.rightTrigger()  //Waterfall
       .whileTrue(new ParallelCommandGroup( 
-        new RunCommand(() -> intakeSubsystem.setLauncherRPM(750), intakeSubsystem),
+        new RunCommand(() -> intakeSubsystem.setLauncherRPM(800), intakeSubsystem),
         (ballSubsystem.feedCommand().finallyDo(() -> ballSubsystem.stop())))
       );
         
