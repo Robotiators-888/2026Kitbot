@@ -118,7 +118,7 @@ public class RobotContainer {
         //     .finallyDo(() -> intakeSubsystem.stop()));
     Driver1.rightTrigger()  //Waterfall
       .whileTrue(new ParallelCommandGroup( 
-        new RunCommand(() -> intakeSubsystem.setLauncherRPM(800), intakeSubsystem),
+        new RunCommand(() -> intakeSubsystem.SetSpeed(.4), intakeSubsystem),
         (ballSubsystem.feedCommand().finallyDo(() -> ballSubsystem.stop())))
       );
         

@@ -30,7 +30,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
         @SuppressWarnings("removal")
         public SUB_IntakeLauncher() {
     
-            intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+            intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushed);
 
 
             SparkMaxConfig launcherConfig = new SparkMaxConfig();
@@ -56,15 +56,17 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             intakeLauncherRoller.set(-1*IntakeLauncher_Intake_Speed);
         }
 
+        public void SetSpeed(double speed){
+            intakeLauncherRoller.set(speed);
+        }
+
         public void IntakeIntake() {
             intakeLauncherRoller.set(IntakeLauncher_Intake_Speed);
         }
 
         @SuppressWarnings("removal")
-        public void setLauncherRPM(double wheelRPM) {
-            TargetLauncherRPM = wheelRPM;
-            LauncherController.setReference(wheelRPM, ControlType.kVelocity);
-    }
+
+    
         public boolean UptoSpeed() {
             return Math.abs(TargetLauncherRPM - intakeLauncherRoller.getEncoder().getVelocity()) < 50;
         }
@@ -85,9 +87,7 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             
         }
 
-        public double LauncherRPM(){
-            return intakeLauncherRoller.getEncoder().getVelocity(); 
-        }
+
 
         public Command spinUpCommand() {
         return this.run(() -> SpinUpandLaunch());
@@ -106,9 +106,8 @@ public class SUB_IntakeLauncher extends SubsystemBase {
         }
 
         public void periodic() {
-            SmartDashboard.putNumber("Launcher RPM", LauncherRPM());
-            SmartDashboard.putNumber("Launcher DesiredRPM", TargetLauncherRPM);
-            SmartDashboard.putBoolean("Launcher Up to Speed", UptoSpeed());
+
+
             SmartDashboard.putNumber("Launcher Voltage", intakeLauncherRoller.getBusVoltage());
             SmartDashboard.putNumber("Launcher Current", intakeLauncherRoller.getOutputCurrent());
             SmartDashboard.putNumber("Launcher Temp", intakeLauncherRoller.getMotorTemperature());
