@@ -60,6 +60,10 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             intakeLauncherRoller.set(speed);
         }
 
+        public void SetVolts(double volts){
+            intakeLauncherRoller.setVoltage(volts);
+        }
+
         public void IntakeIntake() {
             intakeLauncherRoller.set(IntakeLauncher_Intake_Speed);
         }
