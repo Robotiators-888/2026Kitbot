@@ -117,14 +117,13 @@ public class RobotContainer {
         // .whileTrue(intakeSubsystem.spinUpCommand()
         //     .finallyDo(() -> intakeSubsystem.stop()));
     Driver1.rightTrigger()  //Waterfall
-      .whileTrue(new ParallelCommandGroup( 
-        new RunCommand(() -> intakeSubsystem.SetVolts(11), intakeSubsystem),
-        (ballSubsystem.feedCommand().finallyDo(() -> ballSubsystem.stop())))
+      .whileTrue(
+        new RunCommand(() -> intakeSubsystem.SetSpeed(.7), intakeSubsystem)
       );
         
     Driver1.leftTrigger()
-        .whileTrue(ballSubsystem.feedCommand()
-            .finallyDo(() -> ballSubsystem.stop()));
+        .whileTrue(new RunCommand(() -> ballSubsystem.Feederset(70), ballSubsystem));
+
     // While the A button is held on the operator controller, eject fuel back out
     // the intake
     Driver1.rightBumper().whileTrue(

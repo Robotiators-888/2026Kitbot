@@ -71,6 +71,10 @@ public class SUB_Feeder extends SubsystemBase {
 
   }
 
+  public void Feederset(double speed){
+    feederRoller.set(speed);
+  }
+
 
   // A method to stop the rollers
   public void stop() {
