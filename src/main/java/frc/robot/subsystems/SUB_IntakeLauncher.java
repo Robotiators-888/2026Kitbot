@@ -15,11 +15,12 @@ public class SUB_IntakeLauncher extends SubsystemBase {
     private SparkMax intakeLauncherRoller;
 
     
+        @SuppressWarnings("removal")
         public SUB_IntakeLauncher() {
 
 
             //Defines SparkMax Object
-            intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushless);
+            intakeLauncherRoller = new SparkMax(INTAKE_LAUNCHER_MOTOR_ID, MotorType.kBrushed);
             
             //Creates Config for launchermotor
             SparkMaxConfig launcherConfig = new SparkMaxConfig();
@@ -27,7 +28,6 @@ public class SUB_IntakeLauncher extends SubsystemBase {
             //Sets currentlimit for motor and establishes persist mode which stops Sparkmax settings(Brushed/Brushless, ID, and Coast/Brushed) Not be lost
             launcherConfig.smartCurrentLimit(LAUNCHER_MOTOR_CURRENT_LIMIT);
             intakeLauncherRoller.configure(launcherConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-    
         }
     
     

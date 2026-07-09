@@ -17,9 +17,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 import static frc.robot.Constants.OperatorConstants.*;
 import static frc.robot.Constants.FuelConstants.*;
+
+import frc.robot.Controllers.LogitechExtreme3DProController;
 import frc.robot.subsystems.SUB_Drivetrain;
 import frc.robot.subsystems.SUB_Feeder;
-import frc.robot.subsystems.SUB_IntakeLauncher;
 import frc.robot.subsystems.SUB_IntakeLauncher;
 
 /**
@@ -34,10 +35,17 @@ public class RobotContainer {
   private final SUB_Drivetrain driveSubsystem = new SUB_Drivetrain();
   private final SUB_Feeder ballSubsystem = new SUB_Feeder();
   private final SUB_IntakeLauncher intakeSubsystem = new SUB_IntakeLauncher();
+  
 
   // The main controller
-  private final CommandXboxController Driver1 = new CommandXboxController(
+  private final LogitechExtreme3DProController Driver1 = new LogitechExtreme3DProController(
       DRIVER_CONTROLLER_PORT);
+
+  //Creates Triggers based on conditions
+  private final Trigger mainTrigger = new Trigger(() -> Driver1.getButtonOne());
+  private final Trigger sidebutton = new Trigger(() -> Driver1.getButtonTwo());
+  private final Trigger BottomTriggerFL = new Trigger(() -> Driver1.getButtonSeven());
+  private final Trigger BottomTriggerFR = new Trigger(() -> Driver1.getButtonEight());
 
  
 
@@ -47,6 +55,7 @@ public class RobotContainer {
    */
   public RobotContainer() {
     configureBindings();
+    
 
   }
 
@@ -62,26 +71,28 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    
 
-    // While the left bumper on operator controller is held, eject Fuel
-    Driver1.leftBumper().whileTrue(
+    // While the lower left button on operator controller is held, eject Fuel
+    BottomTriggerFL.whileTrue(
       new ParallelCommandGroup(
         (ballSubsystem.runEnd(() -> ballSubsystem.eject(), () -> ballSubsystem.stop())),
         (intakeSubsystem.runEnd(() -> intakeSubsystem.Intakeeject(), () -> intakeSubsystem.stop()))
     ));
 
-    // While the right trigger on the controller the launcher motor gets up to speed
-    Driver1.rightTrigger()
+    // While the main trigger on the controller the launcher motor gets up to speed
+    mainTrigger
         .whileTrue(intakeSubsystem.spinUpCommand()
             .finallyDo(() -> intakeSubsystem.stop()));
 
-    //WHile left trigger is being held balls are fed into the launcher
-    Driver1.leftTrigger()
+    //WHile the side button is being held balls are fed into the launcher
+    sidebutton
         .whileTrue(ballSubsystem.feedCommand()
             .finallyDo(() -> ballSubsystem.stop()));
 
-    //While right bumper is held the robot intakes
-    Driver1.rightBumper().whileTrue(
+
+    //While a button is held the robot intakes
+    BottomTriggerFR.whileTrue(
     new ParallelCommandGroup(
       (ballSubsystem.runEnd(() -> ballSubsystem.intake(), () -> ballSubsystem.stop())),
       (intakeSubsystem.runEnd(() -> intakeSubsystem.IntakeIntake(), () -> intakeSubsystem.stop())))
@@ -97,8 +108,8 @@ public class RobotContainer {
     // are also scaled down so the rotation is more easily controllable.
     driveSubsystem.setDefaultCommand(
         driveSubsystem.driveArcade(
-            () -> -Driver1.getRightX() * DRIVE_SCALING,
-            () -> -Driver1.getLeftY() * ROTATION_SCALING
+            () -> -Driver1.getJoystickZ() * DRIVE_SCALING,
+            () -> -Driver1.getJoystickY() * ROTATION_SCALING
             ));
     ballSubsystem.setDefaultCommand(
       new RunCommand(()->ballSubsystem.stop(),ballSubsystem)
@@ -108,6 +119,7 @@ public class RobotContainer {
         );
   }
 
+   
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
